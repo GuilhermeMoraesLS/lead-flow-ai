@@ -1,0 +1,59 @@
+name: leadflow-sl01
+services:
+  db:
+    image: postgres:17.9-alpine
+    environment:
+      POSTGRES_PASSWORD: ${LOCAL_DB_PASSWORD:?Run scripts/local.py prepare}
+      POSTGRES_DB: leadflow_sl01
+    ports:
+      - "127.0.0.1:54329:5432"
+    volumes:
+      - sl01_database:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d leadflow_sl01"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  auth:
+    image: supabase/gotrue:v2.196.0
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:54321:9999"
+    environment:
+      GOTRUE_API_HOST: 0.0.0.0
+      GOTRUE_API_PORT: 9999
+      API_EXTERNAL_URL: http://127.0.0.1:54321
+      GOTRUE_SITE_URL: http://127.0.0.1:3000
+      GOTRUE_DB_DRIVER: postgres
+      GOTRUE_DB_DATABASE_URL: postgres://supabase_auth_admin:${LOCAL_AUTH_PASSWORD}@db:5432/leadflow_sl01?sslmode=disable
+      GOTRUE_JWT_SECRET: ${LOCAL_JWT_SECRET}
+      GOTRUE_JWT_EXP: 3600
+      GOTRUE_JWT_AUD: authenticated
+      GOTRUE_JWT_ISSUER: http://127.0.0.1:54321/auth/v1
+      GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
+      GOTRUE_JWT_ADMIN_ROLES: service_role
+      GOTRUE_EXTERNAL_EMAIL_ENABLED: "true"
+      GOTRUE_MAILER_AUTOCONFIRM: "true"
+      GOTRUE_RATE_LIMIT_EMAIL_SENT: 100
+      GOTRUE_RATE_LIMIT_SIGNUPS: 100
+      GOTRUE_DISABLE_SIGNUP: "false"
+  redis:
+    image: redis:7.4-alpine
+    ports:
+      - "127.0.0.1:54330:6379"
+    environment:
+      REDISCLI_AUTH: ${LOCAL_REDIS_PASSWORD:?Run scripts/local.py prepare}
+    command: ["redis-server", "--requirepass", "${LOCAL_REDIS_PASSWORD}",
+              "--maxmemory", "64mb", "--maxmemory-policy", "noeviction", "--appendonly", "yes"]
+    volumes:
+      - sl09_redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+volumes:
+  sl01_database:
+  sl09_redis:

@@ -1,11 +1,11 @@
 ---
 title: "LeadFlow.IA — Especificação técnica de IA, dados e automação"
-version: "1.0"
+version: "1.1"
 date_created: "2026-09-20"
-last_updated: "2026-09-20"
+last_updated: "2026-09-24"
 status: "proposta para revisão técnica e validação das pendências de produto"
 source: "PRD-v1.md"
-source_sha256: "8f0e9984052befd75e00b5a9790ecb0c818e19c7f3e17d1842fb119a235be269"
+source_sha256: "b8915ac4fa7ff61268da5315ee96e510c41c45d32db1cc44665e96eed16643cf"
 tags: [architecture, ai, data, automation, security, testing]
 ---
 
@@ -21,7 +21,7 @@ O desenho prioriza a jornada completa no Telegram e sua reprodução no WhatsApp
 
 - **Fonte funcional:** [PRD-v1.md](PRD-v1.md), regras RN-01 a RN-15, histórias US-01 a US-38 e cenários C01 a C46.
 - **Referência técnica:** [plano de desenvolvimento](../docs/plano-desenvolvimento-codex.md). Sua stack serve de base; detalhes antigos de integração não substituem verificação de capacidade do provedor.
-- **Estado observado:** branch `main`, sem histórico de commits e sem aplicação, migrations ou suíte de testes encontrados. Arquivos locais preexistentes permanecem preservados.
+- **Estado observado na elaboração original:** branch `main`, sem aplicação, migrations ou suíte encontrados então. O estado após SL-00–SL-09 e as evidências atuais estão no harness; este retrato histórico não os substitui.
 - **Autorização desta tarefa:** produzir esta SPEC. O pedido permite avançar na especificação; não significa aprovação automática das decisões V01–V10 nem autorização para implementar, provisionar serviços ou publicar.
 - **Maturidade:** todas as escolhas técnicas novas são propostas desta versão. Após aprovação, “DEVE” é obrigatório, “NÃO DEVE” é proibição e “RECOMENDA-SE” admite alternativa fundamentada.
 - O caminho de entrega `doc-specs/spec-v1.md` segue o pedido atual. O caminho antigo citado no final do PRD não será usado como destino.
@@ -30,6 +30,7 @@ O desenho prioriza a jornada completa no Telegram e sua reprodução no WhatsApp
 
 | Marco | Cobertura técnica | Limite |
 | --- | --- | --- |
+| D0 | Catálogo estruturado, adaptador OpenAI controlado, vínculo de bot Telegram preexistente, webhook autenticado, envio e histórico reais com massa de teste | Marco parcial de demonstração; não substitui M1 nem aceita C01/V01 completos |
 | M1 | Onboarding, identidade, conhecimento, produtos, vendedores, Telegram, atendimento, qualificação, CRM, acompanhamento e intervenção humana | Não concluir apenas com uma conversa de demonstração |
 | M2 | WhatsApp não oficial, conexão por QR code, reconexão e equivalência comercial | Obrigatório para concluir o ciclo multicanal |
 | M3 | Ponto de extensão para voz | Implementação somente após V10; não exige componente ativo agora |
@@ -52,6 +53,14 @@ Não inclui cobrança, CRM externo, campanhas, agenda externa, pagamentos, contr
 | V10 — Voz | Nenhuma dependência de voz no caminho obrigatório | Avaliação específica e critérios de aceite próprios |
 
 Essas pendências impedem o aceite das capacidades correspondentes, não a documentação nem testes isolados com políticas sintéticas explícitas.
+
+### 1.4 Perfil técnico D0 para a demonstração
+
+O perfil D0 aprovado pelo solicitante usa um bot Telegram criado previamente e um modelo da API da OpenAI ainda por selecionar. O gestor vincula o bot no aplicativo; a API verifica o vínculo e mantém a credencial protegida, sem aceitar identidade de organização enviada pelo webhook. A chave OpenAI é configuração do servidor e o modelo, prompt, parâmetros e custo observado devem constar da evidência, sem expor segredos ou texto pessoal em logs. Seleção do modelo, acesso, orçamento, URL HTTPS alcançável e mecanismo de configuração dos segredos são condições de liberação, não capacidades já implementadas.
+
+O catálogo estruturado é a única fonte comercial de D0. O servidor fornece ao modelo dados da organização e da revisão atual; valida qualquer proposta de resposta antes de criar intenção de envio. Preço e disponibilidade vêm dos campos persistidos, não de números inventados pelo modelo. Ausência/conflito de suporte, falha da API, instrução maliciosa ou resposta inválida resultam em abstenção/encaminhamento tratável. O sender reaproveita os controles de pausa, opt-out, idempotência e `unknown` já entregues, sem presumir que o provedor externo oferece entrega exatamente uma vez.
+
+A verificação D0 usa PostgreSQL/Redis locais e Telegram/OpenAI reais somente em ambiente e contas de teste controlados. Deve observar entrada autenticada, resposta aceita pelo canal, histórico, isolamento Alfa/Beta, reentrega, segredo não exposto, pedido humano e falhas básicas do provedor. Um conjunto pequeno de perguntas comerciais com resposta esperada independente comprova apenas esse roteiro; a avaliação versionada e ampla de SL-18 permanece necessária para M1.
 
 ## 2. Definições
 

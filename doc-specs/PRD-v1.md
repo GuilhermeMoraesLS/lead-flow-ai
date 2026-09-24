@@ -2,7 +2,7 @@
 
 **Produto:** agente SDR de IA para atendimento comercial multicanal.
 
-**Versão:** 1.0 · **Data:** 20/09/2026 · **Status:** proposta para validação de negócio.
+**Versão:** 1.1 · **Data:** 24/09/2026 · **Status:** proposta para validação de negócio; decisão D0 documentada.
 
 **Contexto:** MVP acadêmico de Métodos e Aplicações de IA, com perspectiva de evolução para SaaS.
 
@@ -28,7 +28,7 @@ O primeiro marco é a jornada completa no Telegram. O ciclo inclui também Whats
 
 **Legenda de maturidade:** **[D] documentado** significa presente nas fontes, não implementação comprovada; **[P] proposto** significa detalhamento de produto elaborado aqui, sujeito à aprovação; **[V] validar** significa decisão ainda aberta. Os critérios e cenários derivados de uma proposta só se tornam compromisso após sua aprovação.
 
-O repositório inspecionado está na branch `main`, sem commits e com documentação não rastreada. Não foram encontrados aplicação ou testes implementados. `CONTEXT.md` e a constituição ainda são modelos sem vocabulário preenchido; as definições abaixo são propostas para alinhamento.
+No retrato da elaboração original, o repositório estava na branch `main`, sem aplicação ou testes encontrados. Esse retrato histórico não descreve o estado após SL-00–SL-09; consultar o harness para implementação e evidências atuais. `CONTEXT.md` e a constituição ainda eram modelos sem vocabulário preenchido; as definições abaixo foram propostas para alinhamento.
 
 F02 cita pesquisas de concorrência, precificação e planilhas de custos que não estão na pasta `docs`. Portanto, não há evidência disponível para declarar demanda validada, exclusividade competitiva, margem ou preço aprovado. Estimativas financeiras, limites de plataformas e promessas de provisionamento das fontes precisam de validação própria; não são garantias deste PRD.
 
@@ -82,10 +82,19 @@ Usar janela e amostra declaradas, contar leads únicos dentro de cada organizaç
 
 | Marco | Entrega de negócio | Condição de conclusão |
 | --- | --- | --- |
+| D0 — Demonstração Telegram | Conta no aplicativo, poucos produtos cadastrados, bot criado previamente pelo responsável e vinculado no aplicativo, primeira resposta com API da OpenAI apoiada no catálogo e histórico visível | Jornada de ponta a ponta com contas e dados de teste controlados; critérios D0 abaixo. É entrega parcial e não conclui M1 |
 | M1 — Jornada Telegram | Conta, empresa, um agente, conhecimento, produtos, vendedores, canal, CRM, qualificação, follow-up e controle humano | Jornada completa da seção 13 e cenários aplicáveis aprovados |
 | M2 — Validação multicanal | Mesma operação comercial no WhatsApp não oficial, conexão e recuperação pelo aplicativo | Repetição dos resultados comerciais essenciais no segundo canal; obrigatório para concluir o ciclo |
 | M3 — Voz condicional | Experiência de conversa por voz | Só entra mediante decisão de viabilidade, esforço e critérios próprios; não bloqueia M1/M2 |
 | Evolução | WhatsApp oficial | Fora da entrega deste ciclo |
+
+### Decisão D0 — apresentação em aproximadamente quatro dias (24/09/2026)
+
+O solicitante autorizou preparar o bot Telegram antes da apresentação e vinculá-lo ao aplicativo; o atendimento da demonstração usará algum modelo da API da OpenAI. O modelo específico, credencial, orçamento e ambiente de webhook ainda precisam ser definidos antes da implementação dependente. O token do bot e a chave da OpenAI são segredos de configuração: não entram no código, repositório, histórico ou evidências. A autorização cobre o planejamento desta demonstração; chamadas pagas, conexão externa e publicação exigem as condições operacionais aplicáveis.
+
+**Aceite D0:** o gestor cria conta/empresa no web app, cadastra produtos sintéticos, vincula no app seu bot preexistente, ativa explicitamente o agente e observa uma pergunta enviada por uma conta Telegram de teste receber resposta fundamentada no catálogo, com histórico no aplicativo. Informação comercial ausente, conflitante ou produto indisponível não vira afirmação inventada; há caminho visível para humano. Reentrega de webhook não duplica conversa ou resposta e envio incerto não é repetido cegamente. Uma segunda organização sintética não lê produtos/conversas/segredos da primeira.
+
+**Limite D0:** a criação prévia do bot é intervenção externa assumida e não satisfaz a condição sem intervenção técnica de C01 nem encerra V01. D0 não comprova upload de documentos, qualificação, follow-up, WhatsApp, piloto, qualidade geral do modelo ou M1/M2. V02/V09 ficam delimitadas à configuração e ao catálogo sintéticos da demonstração; decisões completas continuam abertas para os marcos originais.
 
 **Incluído [D]:** aplicativo web em português do Brasil; configuração self-service; um agente por empresa; um bot Telegram por empresa; CRM interno simples; produtos/serviços genéricos; conhecimento próprio; cadastro e atribuição de vendedores; histórico, resumo, classificação e estágio; atendimento humano; follow-ups por regras de tempo; separação entre empresas.
 

@@ -1,6 +1,2016 @@
 {
   "schemaVersion": 1,
-  "sourceRevisions": [],
-  "slices": []
+  "feature": "LeadFlow.IA v1",
+  "updatedAt": "2026-09-24T20:15:10Z",
+  "git": {
+    "branch": "main",
+    "baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6",
+    "revisionScope": "working tree; nenhum commit criado",
+    "preexistingChanges": [
+      "RULES.md (modified)",
+      "doc-specs/implementation-slices.md (untracked)",
+      "prompts/PROMPT-IMPLEMENTAR-SLICE.md (untracked)"
+    ]
+  },
+  "sourceRevisions": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "11b9b393e34e7b4d060bdbb7841a8c4e1ed2432827c828938087f0fb2d0b815b"
+    },
+    {
+      "path": "RULES.md",
+      "sha256": "8b35e856d75eeb5251762b33dbf34a19f7b0ce3d8318eee669dc9a88731bb774"
+    },
+    {
+      "path": "CONTEXT.md",
+      "sha256": "cc9f18246ac17365b370b6457e6ed389c3b1aaa94dcf4304cd6d84937d5ee0e1"
+    },
+    {
+      "path": "docs-agents/validation.md",
+      "sha256": "40beb74236bc2273c2e3d9af851e48062448c1087fde795f09e7f8f3cedb78a1"
+    },
+    {
+      "path": "docs-agents/security.md",
+      "sha256": "0b42bec65d89dc2b10bf6609526efbbf4d2fbe598b395c01ea2b14b10cfcf594"
+    },
+    {
+      "path": "doc-specs/PRD-v1.md",
+      "sha256": "b8915ac4fa7ff61268da5315ee96e510c41c45d32db1cc44665e96eed16643cf"
+    },
+    {
+      "path": "doc-specs/spec-v1.md",
+      "sha256": "374a85814a2a8d2fa793d3d482901342b04391494d409a99c7b9fd600970ada3"
+    },
+    {
+      "path": "doc-specs/implementation-slices.md",
+      "sha256": "77bb390692d1e1d81cd306f40b9241d638b8b5f15367ea5448004bcd49124bd5"
+    },
+    {
+      "path": "prompts/PROMPT-IMPLEMENTAR-SLICE.md",
+      "sha256": "ab65227dd0007774a85a4d55e914a73f6805978942e6ca38f5e6abd34ebf98f3"
+    }
+  ],
+  "currentSlice": "SL-10",
+  "nextCandidate": "SL-D01",
+  "demoPlan": {
+    "milestone": "D0",
+    "status": "planned",
+    "basis": "Usuário pediu reordenação para apresentação em aproximadamente quatro dias, com bot Telegram criado previamente e modelo da API da OpenAI; planejamento autorizado, sem execução dos novos slices.",
+    "implementationAuthorization": false,
+    "fullM1StillOpen": true
+  },
+  "authorization": {
+    "slice": "SL-10",
+    "basis": "Pedido explícito do usuário para exclusivamente SL-10; seams de API de produtos, formulário do gestor e PostgreSQL local confirmadas na conversa.",
+    "otherSlicesAuthorized": false
+  },
+  "modelPolicy": {
+    "source": "RULES.md §12",
+    "automaticSwitch": false,
+    "hitlPauseRequired": false
+  },
+  "evidence": [
+    {
+      "id": "EV-01",
+      "status": "passed",
+      "procedure": "ConvertFrom-Json; comparar Source IDs, dependências e critérios contra metadados do plano; verificar IDs nos arquivos de origem; resolver links locais e âncoras dos Markdown.",
+      "expected": "JSON legível; 35 slices com origens/dependências exatas; 4 critérios intactos; links válidos; demais slices não autorizados.",
+      "observed": "35 slices, 4 critérios, 47 links; zero divergências/links quebrados; 34 slices planned e não autorizados.",
+      "revision": {
+        "baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6",
+        "scope": "working tree .agents/harness; fontes em sourceRevisions; sem novo commit",
+        "checkedAt": "2026-09-23T11:18:53.5900896-03:00"
+      }
+    },
+    {
+      "id": "EV-02",
+      "status": "passed",
+      "procedure": "Get-FileHash SHA256 dos nove arquivos sourceRevisions; comparar com valores de preparação; inspecionar branch/log/status e regra de invalidação do README.",
+      "expected": "Fontes e trabalho preexistente preservados; revisão real do Git registrada; mudanças futuras localizáveis por consumidor/dependências.",
+      "observed": "Nove hashes iguais; main em 4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6; README define revisão de consumidores e dependentes, sem promover evidência automaticamente.",
+      "revision": {
+        "baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6",
+        "scope": "working tree .agents/harness; fontes em sourceRevisions; sem novo commit",
+        "checkedAt": "2026-09-23T11:18:53.5900896-03:00"
+      }
+    },
+    {
+      "id": "EV-03",
+      "status": "passed",
+      "procedure": "Simular README → state → handoff → bloco SL-00 e seus Source IDs; selecionar somente autorizado/incompleto com dependências concluídas; examinar pacote SL-01.",
+      "expected": "Retomar SL-00; impedir início automático de SL-01; localizar fontes, condições e seams pendentes sem carregar todos os blocos.",
+      "observed": "Somente SL-00 elegível durante trabalho; após sua conclusão nenhum outro autorizado. SL-01 permanece planned, com aprovação PRD/SPEC/slice, V02/V05 e seams por confirmar no handoff.",
+      "revision": {
+        "baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6",
+        "scope": "working tree .agents/harness; fontes em sourceRevisions; sem novo commit",
+        "checkedAt": "2026-09-23T11:18:53.5900896-03:00"
+      }
+    },
+    {
+      "id": "EV-04",
+      "status": "passed",
+      "procedure": "git diff --check -- .agents/harness; revisão do conteúdo/diff dos seis arquivos, metadados comparados ao plano e git status --short com inspeção dos não rastreados.",
+      "expected": "Somente seis arquivos do harness alterados por esta execução; nenhum erro de whitespace, requisito alterado ou conclusão de produto sem prova.",
+      "observed": "Diff sem erro; seis arquivos-alvo alterados; RULES e os dois arquivos não rastreados preexistentes preservados por hash. Avisos Git de ignore global e normalização LF/CRLF sem falha dos comandos.",
+      "revision": {
+        "baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6",
+        "scope": "working tree .agents/harness; fontes em sourceRevisions; sem novo commit",
+        "checkedAt": "2026-09-23T11:18:53.5900896-03:00"
+      }
+    },
+    {
+      "id": "EV-05",
+      "status": "passed",
+      "procedure": "Ler docs-agents/validation.md e RULES §§6–7/12; aplicar verificações documentais, sem inventar comandos ausentes.",
+      "expected": "Cumprir verificações aplicáveis à documentação e distinguir execução de produto não realizada.",
+      "observed": "Guia contém comandos [A DEFINIR]; coerência, referências, retomada e diff verificados. Não há comando obrigatório executável de aplicação definido para este slice.",
+      "revision": {
+        "baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6",
+        "scope": "working tree .agents/harness; fontes em sourceRevisions; sem novo commit",
+        "checkedAt": "2026-09-23T11:18:53.5900896-03:00"
+      }
+    },
+    {
+      "id": "EV-06",
+      "status": "not_run",
+      "procedure": "Testes de aplicação, lint de código, tipos, build e E2E.",
+      "expected": "Não aplicáveis a esta alteração exclusivamente documental; comandos não definidos no guia.",
+      "observed": "Não executados; nenhuma evidência de conformidade do produto inferida.",
+      "revision": {
+        "baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6",
+        "scope": "working tree .agents/harness; fontes em sourceRevisions; sem novo commit",
+        "checkedAt": "2026-09-23T11:18:53.5900896-03:00"
+      }
+    },
+    {
+      "id": "SL01-RED",
+      "status": "passed",
+      "procedure": "Suíte antes da rota.",
+      "observed": "1 teste falhou com HTTP 404 em POST /v1/organizations; Red relevante.",
+      "revision": {
+        "baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6",
+        "scope": "working tree; implementação SL-01; sem commit novo",
+        "checkedAt": "2026-09-23T19:01:48.120Z"
+      }
+    },
+    {
+      "id": "SL01-GREEN",
+      "status": "passed",
+      "procedure": "Migrations locais e scripts/local.py test -q.",
+      "observed": "5 testes passaram: criação/leitura, idempotência, conflito, isolamento/sessão expirada e rejeição sem consumir chave.",
+      "revision": {
+        "baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6",
+        "scope": "working tree; implementação SL-01; sem commit novo",
+        "checkedAt": "2026-09-23T19:01:48.120Z"
+      }
+    },
+    {
+      "id": "SL01-RLS",
+      "status": "passed",
+      "procedure": "Dois usuários sintéticos, pool reutilizado e JWT expirado.",
+      "observed": "Beta recebe 404 ao consultar Alfa; token expirado recebe 401; agente/automação inativos.",
+      "revision": {
+        "baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6",
+        "scope": "working tree; implementação SL-01; sem commit novo",
+        "checkedAt": "2026-09-23T19:01:48.120Z"
+      }
+    },
+    {
+      "id": "SL01-MIGRATION",
+      "status": "passed",
+      "procedure": "scripts/local.py migrate repetido e revisão das migrations.",
+      "observed": "Instalação e segunda execução concluíram; 0001–0003 preservam checksum e lock/idempotência.",
+      "revision": {
+        "baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6",
+        "scope": "working tree; implementação SL-01; sem commit novo",
+        "checkedAt": "2026-09-23T19:01:48.120Z"
+      }
+    },
+    {
+      "id": "SL01-PY",
+      "status": "passed",
+      "procedure": "ruff check e mypy.",
+      "observed": "Ruff sem erros; mypy sem issues em 4 arquivos.",
+      "revision": {
+        "baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6",
+        "scope": "working tree; implementação SL-01; sem commit novo",
+        "checkedAt": "2026-09-23T19:01:48.120Z"
+      }
+    },
+    {
+      "id": "SL01-WEB",
+      "status": "passed",
+      "procedure": "npm lint/typecheck/build.",
+      "observed": "Todos passaram; rota / gerada.",
+      "revision": {
+        "baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6",
+        "scope": "working tree; implementação SL-01; sem commit novo",
+        "checkedAt": "2026-09-23T19:01:48.120Z"
+      }
+    },
+    {
+      "id": "SL01-DIFF",
+      "status": "passed",
+      "procedure": "git diff --check e revisão do diff.",
+      "observed": "Sem erros; arquivos do slice e harness revisados; preexistentes preservados.",
+      "revision": {
+        "baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6",
+        "scope": "working tree; implementação SL-01; sem commit novo",
+        "checkedAt": "2026-09-23T19:01:48.120Z"
+      }
+    },
+    {
+      "id": "SL01-EXT",
+      "status": "not_run",
+      "procedure": "Testes externos/Supabase hospedado/E2E navegador.",
+      "observed": "Não executados; fora do escopo local do SL-01.",
+      "revision": {
+        "baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6",
+        "scope": "working tree; implementação SL-01; sem commit novo",
+        "checkedAt": "2026-09-23T19:01:48.120Z"
+      }
+    },
+    {
+      "id": "SL02-RED",
+      "status": "passed",
+      "procedure": "Teste de integração antes de GET/PUT e teste de ativação antes da rota.",
+      "observed": "404 nas rotas ainda inexistentes; falhas relevantes ao slice.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-02", "checkedAt": "2026-09-23T19:23:39Z"}
+    },
+    {
+      "id": "SL02-API",
+      "status": "passed",
+      "procedure": "python scripts/local.py test -q; migration 0004 aplicada e repetida no banco local sintético.",
+      "observed": "10 testes passaram na suíte final. Migration repetida sem erro. Salvamento/leitura, conflito 409, sessão expirada 401, isolamento 404 e ativação incompleta 409 comprovados.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-02", "checkedAt": "2026-09-23T19:23:39Z"}
+    },
+    {
+      "id": "SL02-WEB",
+      "status": "passed",
+      "procedure": "npm run typecheck, lint, build e test:e2e -- e2e/onboarding.spec.ts, com Edge local.",
+      "observed": "Tipos, lint e build passaram; 1 E2E passou: salvar, recarregar, valores e impedimentos, ativação recusada e agente inativo.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-02", "checkedAt": "2026-09-23T19:23:39Z"}
+    },
+    {
+      "id": "SL02-PY",
+      "status": "passed",
+      "procedure": "ruff check apps/api/src scripts tests; mypy apps/api/src.",
+      "observed": "Ambos passaram após ajuste da ordem de imports.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-02", "checkedAt": "2026-09-23T19:23:39Z"}
+    },
+    {
+      "id": "SL02-DIFF",
+      "status": "passed",
+      "procedure": "git diff --check; inspeção dos arquivos-alvo e não rastreados; checagem de hashes e referências do harness.",
+      "observed": "Sem erro de whitespace; três critérios com evidências existentes; fontes sem mudança; nenhum slice adicional done. Arquivos gerados pelo Next dev removidos.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-02", "checkedAt": "2026-09-23T19:32:38Z"}
+    },
+    {
+      "id": "SL03-RED",
+      "status": "passed",
+      "procedure": "Testes de API e E2E antes das respectivas rotas/formulário.",
+      "observed": "404 no cadastro, habilitação, troca de senha, revogação e disponibilidade; 422 no contrato antigo sem contato; E2E sem seção Vendedores. Falhas relevantes ao slice.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-03", "checkedAt": "2026-09-23T20:15:01Z"}
+    },
+    {
+      "id": "SL03-API",
+      "status": "passed",
+      "procedure": ".venv/Scripts/python.exe scripts/local.py migrate (repetido); .venv/Scripts/python.exe scripts/local.py test -q.",
+      "observed": "Migrations 0005–0012 aplicadas e repetidas; 12 testes passaram. Cadastro sem acesso, Auth local com senha inicial de resposta única, troca obrigatória, elegibilidade, isolamento de empresa/configuração e revogação com JWT válido observados.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-03", "checkedAt": "2026-09-23T20:15:01Z"}
+    },
+    {
+      "id": "SL03-WEB",
+      "status": "passed",
+      "procedure": "npm.cmd run lint, typecheck, build e test:e2e -- e2e/onboarding.spec.ts e2e/sellers.spec.ts, Edge local.",
+      "observed": "Lint sem warning final, tipos e build passaram; 2 E2E passaram, incluindo cadastro, habilitação, troca de senha, revogação e regressão do onboarding.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-03", "checkedAt": "2026-09-23T20:15:01Z"}
+    },
+    {
+      "id": "SL03-PY",
+      "status": "passed",
+      "procedure": "ruff check apps/api/src scripts tests; mypy apps/api/src.",
+      "observed": "Ambos passaram na implementação final.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-03", "checkedAt": "2026-09-23T20:15:01Z"}
+    },
+    {
+      "id": "SL03-DIFF",
+      "status": "passed",
+      "procedure": "git diff --check; status, arquivos e não rastreados pertinentes; hashes de fontes e critérios/evidências do harness.",
+      "observed": "Sem erro de whitespace; fontes pertinentes iguais às revisões; mudanças preexistentes preservadas; arquivos gerados pelo Next dev removidos.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-03", "checkedAt": "2026-09-23T20:15:01Z"}
+    },
+    {
+      "id": "SL04-RED", "status": "passed",
+      "procedure": "scripts/local.py test -q tests/integration/test_inbound_history.py antes das rotas.",
+      "observed": "4 testes falharam com 404 na criação do canal de teste; Red relevante.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-04", "checkedAt": "2026-09-23T20:25:23Z"}
+    },
+    {
+      "id": "SL04-API", "status": "passed",
+      "procedure": "scripts/local.py migrate repetido; scripts/local.py test -q, PostgreSQL e Auth locais sintéticos.",
+      "observed": "Migrations 0013–0016 aplicadas e repetidas; 17 testes passaram, incluindo 5 do SL-04: commit antes do 2xx, rollback após falha, deduplicação, texto igual em evento distinto, isolamento tenant/canal, callbacks ignorados e efeito único após crash simulado entre consumo e marcação da outbox.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-04", "checkedAt": "2026-09-23T20:25:23Z"}
+    },
+    {
+      "id": "SL04-PY", "status": "passed",
+      "procedure": "ruff check apps/api/src scripts tests; mypy apps/api/src.",
+      "observed": "Ambos passaram na implementação final.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-04", "checkedAt": "2026-09-23T20:25:23Z"}
+    },
+    {
+      "id": "SL04-EXT", "status": "not_run",
+      "procedure": "Telegram real, Evolution, broker externo, frontend E2E.",
+      "observed": "Não executados; fora do SL-04, que usa canal e consumidor simulados locais.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-04", "checkedAt": "2026-09-23T20:25:23Z"}
+    },
+    {
+      "id": "SL04-DIFF", "status": "passed",
+      "procedure": "ConvertFrom-Json do state; git diff --check e status; inspeção dos arquivos do SL-04, critérios/evidências e hashes das fontes; teste focado repetido após registro do harness.",
+      "observed": "JSON válido, quatro critérios ligados a evidências, fontes sem mudança, sem erro de whitespace; 5 testes focados passaram. Git avisou sobre ignore global e LF/CRLF. Uma tentativa de teste recebeu acesso negado ao launcher Python no sandbox e passou na repetição autorizada.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-04; sem commit", "checkedAt": "2026-09-23T20:30:37Z"}
+    },
+    {
+      "id": "SL05-RED", "status": "passed",
+      "procedure": "scripts/local.py test -q tests/integration/test_human_queue.py antes da migration/rotas.",
+      "observed": "3 testes falharam por rota de fila ausente e modo de conversa ausente; 1 isolamento preexistente passou.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-05", "checkedAt": "2026-09-23T20:48:18Z"}
+    },
+    {
+      "id": "SL05-API", "status": "passed",
+      "procedure": "scripts/local.py migrate aplicado/repetido; scripts/local.py test -q contra PostgreSQL/Auth locais sintéticos.",
+      "observed": "21 testes passaram; quatro do SL-05 cobrem pedido explícito, motivo/modo/estágio, responsável/ação da fila sem vendedor elegível, ausência de resumo, reentrega, histórico e isolamento de gestor/vendedor/empresa.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-05", "checkedAt": "2026-09-23T20:48:18Z"}
+    },
+    {
+      "id": "SL05-WEB", "status": "passed",
+      "procedure": "npm.cmd run lint/typecheck/build; npm.cmd run test:e2e no Edge local.",
+      "observed": "Lint, tipos e build passaram; 3 E2E passaram, inclusive fila e histórico sem resumo. Build/E2E foram repetidos fora do sandbox após EPERM local.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-05", "checkedAt": "2026-09-23T20:48:18Z"}
+    },
+    {
+      "id": "SL05-PY", "status": "passed",
+      "procedure": "ruff check apps/api/src scripts tests; mypy apps/api/src.",
+      "observed": "Ambos passaram após corrigir variável não usada no teste.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-05", "checkedAt": "2026-09-23T20:48:18Z"}
+    },
+    {
+      "id": "SL05-EXT", "status": "not_run",
+      "procedure": "Modelo real, Telegram externo, assunção/resposta por vendedor e gatilho por lead pronto para conversão.",
+      "observed": "Não executados; pertencem a slices posteriores e não comprovam este gatilho explícito local.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-05", "checkedAt": "2026-09-23T20:48:18Z"}
+    },
+    {
+      "id": "SL05-DIFF", "status": "passed",
+      "procedure": "ConvertFrom-Json de state, vínculo dos três critérios às evidências, comparação dos hashes de fontes, inspeção dos arquivos do slice, git diff --check e git status --short; suíte Python repetida após registro.",
+      "observed": "JSON válido, três critérios passed e ligados a evidências; fontes sem mudança, nenhum erro de whitespace; 21 testes Python passaram. Avisos Git de ignore global e LF/CRLF sem falha. Arquivos AGENTS/CLAUDE gerados pelo Next dev foram removidos.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-05; sem commit", "checkedAt": "2026-09-23T20:48:18Z"}
+    },
+    {
+      "id": "SL06-API", "status": "passed",
+      "procedure": "scripts/local.py migrate aplicado e repetido; scripts/local.py test -q tests/integration/test_human_reply.py e suíte completa, PostgreSQL/Auth locais sintéticos.",
+      "observed": "10 testes focados e 31 da suíte passaram: atribuição/assunção concorrente, vendedor, 202 pending, accepted sem recibo de leitura, rejected/unknown com incidente, não reenvio, limite 4096, isolamento e uma intenção dispatching por conversa.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-06; sem commit", "checkedAt": "2026-09-24T13:57:25Z"}
+    },
+    {
+      "id": "SL06-WEB", "status": "passed",
+      "procedure": "npm.cmd run lint; npm.cmd run typecheck; npm.cmd run build; npm.cmd run test:e2e -- e2e/human-queue.spec.ts no Edge local.",
+      "observed": "Lint, tipos e build passaram; 1 E2E passou com claim, resposta 202/pending, dispatch accepted e leitura não confirmada.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-06; sem commit", "checkedAt": "2026-09-24T13:57:25Z"}
+    },
+    {
+      "id": "SL06-PY", "status": "passed",
+      "procedure": "ruff check apps/api/src scripts tests; mypy apps/api/src.",
+      "observed": "Ruff e mypy passaram após o ajuste final; aviso de depreciação TestClient/httpx na suíte sem falha.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-06; sem commit", "checkedAt": "2026-09-24T13:57:25Z"}
+    },
+    {
+      "id": "SL06-DIFF", "status": "passed",
+      "procedure": "Inspeção dirigida de migration, API, UI, testes e arquivos do harness; git status --short e git diff --check; hashes de PRD/SPEC e bloco do slice comparados ao handoff.",
+      "observed": "Arquivos do SL-06 e working tree preexistente preservados; sem erro de whitespace. Git mantém avisos de ignore global e LF/CRLF; nenhum commit criado.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-06; sem commit", "checkedAt": "2026-09-24T13:57:25Z"}
+    },
+    {
+      "id": "SL07-API", "status": "passed",
+      "procedure": "scripts/local.py migrate aplicado/repetido; scripts/local.py test -q em PostgreSQL/Auth locais sintéticos; has_function_privilege das funções de claim.",
+      "observed": "44 testes passaram. SL-07 cobre pausa antes da preparação/autorização, 202 durante tentativa, claim concorrente, conclusão accepted/unknown consultável, bloqueio de contato, retorno explícito à IA, resposta manual durante pausa e isolamento/vínculo revogado. Claim antigo: EXECUTE false para app_api; claim controlado: true.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-07; sem commit", "checkedAt": "2026-09-24T14:33:15Z"}
+    },
+    {
+      "id": "SL07-WEB", "status": "passed",
+      "procedure": "npm.cmd run lint; npm.cmd run typecheck; npm.cmd run build; npm.cmd run test:e2e -- e2e/automation-controls.spec.ts e2e/human-queue.spec.ts no Edge local.",
+      "observed": "Lint, tipos e build passaram; 2 E2E passaram. UI mostrou controle aplicado durante envio e conclusão posterior sem chamar aceitação de cancelamento.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-07; sem commit", "checkedAt": "2026-09-24T14:33:15Z"}
+    },
+    {
+      "id": "SL07-PY", "status": "passed",
+      "procedure": "ruff check apps/api/src scripts tests; mypy apps/api/src.",
+      "observed": "Ruff e mypy passaram após os ajustes finais; aviso de depreciação TestClient/httpx sem falha.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-07; sem commit", "checkedAt": "2026-09-24T14:33:15Z"}
+    },
+    {
+      "id": "SL07-DIFF", "status": "passed",
+      "procedure": "Inspeção dirigida de migrations 0023–0031, API, UI, testes e harness; git status --short e git diff --check; hashes de PRD/SPEC/plano conferidos.",
+      "observed": "Somente arquivos do SL-07 e harness previstos foram alterados nesta retomada; trabalho preexistente preservado, nenhum commit criado. Avisos Git de ignore global e LF/CRLF sem erro de diff.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-07; sem commit", "checkedAt": "2026-09-24T14:33:15Z"}
+    },
+    {
+      "id": "SL08-API", "status": "passed",
+      "procedure": "scripts/local.py migrate aplicado e repetido; scripts/local.py test -q tests/integration/test_opt_out.py e suíte completa no PostgreSQL/Auth locais sintéticos.",
+      "observed": "5 testes focados e 49 na suíte: origem durável em segundo processo, cancelamento pendente, retry idempotente, novo contato encaminhado, reativação global, isolamento empresa/canal/contato, desbloqueio sintético recusado e T01 com tentativa externa aceita após controle.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-08; sem commit", "checkedAt": "2026-09-24T14:49:53Z"}
+    },
+    {
+      "id": "SL08-WEB", "status": "passed",
+      "procedure": "npm.cmd run lint; npm.cmd run typecheck; npm.cmd run build; npm.cmd run test:e2e -- e2e/opt-out.spec.ts no Edge local.",
+      "observed": "Lint, tipos e build passaram; 1 E2E mostrou motivo, origem e mensagem no histórico e botão de retorno à IA desabilitado. Build inicial no sandbox teve EPERM em .next/trace; repetição autorizada passou.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-08; sem commit", "checkedAt": "2026-09-24T14:49:53Z"}
+    },
+    {
+      "id": "SL08-PY", "status": "passed",
+      "procedure": "ruff check apps/api/src scripts tests; mypy apps/api/src.",
+      "observed": "Ruff e mypy passaram após correção da ordem de imports; aviso TestClient/httpx sem falha.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-08; sem commit", "checkedAt": "2026-09-24T14:49:53Z"}
+    },
+    {
+      "id": "SL08-DIFF", "status": "passed",
+      "procedure": "Revisão dirigida de migrations 0032–0033, API, UI, testes e harness; git status --short e git diff --check; hashes de PRD/SPEC/plano conferidos.",
+      "observed": "Fontes mantiveram hashes registrados; migrations incrementais preservam as aplicadas, ordem de lock e escopo local. Trabalho preexistente preservado, sem commit; arquivos temporários de regras gerados por Next dev removidos.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-08; sem commit", "checkedAt": "2026-09-24T14:49:53Z"}
+    },
+    {
+      "id": "SL09-FOCUSED", "status": "passed",
+      "procedure": "scripts/local.py migrate aplicado a 0034–0036; scripts/local.py test -q tests/integration/test_recovery.py após 0036.",
+      "observed": "3 testes passaram: crash sintético após iniciar dispatch, recuperação para unknown com incidente/dono, repetição sem reenvio, executor atrasado sem saída, resolução com evidência sem alterar unknown. Não cobre worker/broker real nem migration 0037.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-09 parcial; sem commit", "checkedAt": "2026-09-24T15:31:11Z"}
+    },
+    {
+      "id": "SL09-PARTIAL-GATES", "status": "not_run",
+      "procedure": "Aplicar/testar migration 0037; integrar worker Celery; FT-01/08/11 com Redis real; suíte final, Ruff, mypy, web/E2E e revisão final do diff.",
+      "observed": "Interrompido a pedido do usuário por limite de janela; migration 0037 apenas escrita, worker e testes de broker ainda ausentes. Redis local autenticado respondeu PING; 52 testes Python passaram antes de 0035–0037, e Ruff falhou por alias UTC, código corrigido sem repetição final.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-09 parcial; sem commit", "checkedAt": "2026-09-24T15:31:11Z"}
+    },
+    {
+      "id": "SL09-BROKER", "status": "passed",
+      "procedure": "scripts/local.py migrate aplicado até 0040 e repetido; pytest tests/integration/test_recovery.py tests/integration/test_recovery_worker.py com PostgreSQL, Redis e worker Celery reais locais.",
+      "observed": "Perda de mensagem em fila Redis isolada seguida de scan reconstruiu efeito único; worker encerrado após commit e antes de ack preservou efeito único na reexecução; fencing recusou token vencido; dispatch abandonado virou unknown via broker, sem reenvio. Cinco retries seguros ou Retry-After além do prazo geraram incidente com motivo, dono e próxima ação; outra conversa da mesma empresa prosseguiu.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-09; sem commit", "checkedAt": "2026-09-24T19:22:46Z"}
+    },
+    {
+      "id": "SL09-PY", "status": "passed",
+      "procedure": "scripts/local.py test -q; ruff check apps/api/src scripts tests; mypy apps/api/src.",
+      "observed": "58 testes Python, Ruff e mypy passaram; aviso de depreciação TestClient/httpx sem falha.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-09; sem commit", "checkedAt": "2026-09-24T19:22:46Z"}
+    },
+    {
+      "id": "SL09-WEB", "status": "passed",
+      "procedure": "npm.cmd run lint; npm.cmd run typecheck; npm.cmd run build em apps/web.",
+      "observed": "Lint, tipos e build passaram; tentativa inicial de build no sandbox falhou com EPERM e repetição autorizada passou. Nenhuma interface web mudou neste slice; E2E web não executado.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-09; sem commit", "checkedAt": "2026-09-24T19:22:46Z"}
+    },
+    {
+      "id": "SL09-DIFF", "status": "passed",
+      "procedure": "Revisão dirigida de migrations 0034–0040, API, worker, testes e harness; git status --short, git diff --check e hashes de AGENTS/RULES/CONTEXT/PRD/SPEC/plano.",
+      "observed": "Migrations aplicadas mantidas sem reescrita; fontes com hashes anteriores; trabalho preexistente preservado, sem commit. Avisos Git de ignore global e LF/CRLF sem erro de diff.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-09; sem commit", "checkedAt": "2026-09-24T19:22:46Z"}
+    },
+    {
+      "id": "D0-PLAN", "status": "passed",
+      "procedure": "Revisão documental de PRD §5, SPEC §1.4, índice/blocos/cobertura do plano, estado e mapa do harness; ConvertFrom-Json, conferência de IDs/dependências/âncoras e Source IDs D0, grafo sem ciclo, nove hashes e git diff --check.",
+      "observed": "38 slices com IDs únicos, zero dependência ou âncora ausente, grafo acíclico, três blocos D0 com dependências/Source IDs iguais ao state e IDs presentes nas fontes; nove hashes coincidem e diff --check passou. Slices novos permanecem planned/not_run; modelo específico, credencial, orçamento e HTTPS seguem condições de liberação. Nenhum teste de aplicação nesta revisão.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree documental D0; sem commit", "checkedAt": "2026-09-24T19:53:15Z"}
+    },
+    {
+      "id": "SL10-API", "status": "passed",
+      "procedure": "scripts/local.py migrate aplicado e repetido; scripts/local.py test -q tests/integration/test_products.py e suíte completa no PostgreSQL/Auth locais sintéticos.",
+      "observed": "5 testes focados e 63 na suíte passaram: zero/null/decimal exato, versões imutáveis, revisão comercial, revogação, conflito sem avanço, preços inválidos e isolamento de gestor/vendedor/Alfa/Beta. Migration 0041 repetida sem erro.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-10; sem commit", "checkedAt": "2026-09-24T20:13:39Z"}
+    },
+    {
+      "id": "SL10-WEB", "status": "passed",
+      "procedure": "npm.cmd run lint; npm.cmd run typecheck; npm.cmd run build; npm.cmd run test:e2e -- e2e/products.spec.ts no Edge local.",
+      "observed": "Lint, tipos e build passaram; 1 E2E passou com cadastro pelo app, correção de zero para desconhecido, indisponibilidade e recarga. Após ajuste final da consulta da API, 5 testes focados e 63 da suíte passaram; frontend não mudou depois do E2E.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-10; sem commit", "checkedAt": "2026-09-24T20:13:39Z"}
+    },
+    {
+      "id": "SL10-PY", "status": "passed",
+      "procedure": "python -m ruff check apps/api/src scripts tests; python -m mypy apps/api/src após último ajuste.",
+      "observed": "Ruff e mypy passaram; aviso TestClient/httpx de depreciação sem falha na suíte.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-10; sem commit", "checkedAt": "2026-09-24T20:13:39Z"}
+    },
+    {
+      "id": "SL10-DIFF", "status": "passed",
+      "procedure": "Revisão dirigida de migration 0041, API, UI, testes e harness; git status --short --untracked-files=all, git diff --check, scan de whitespace nos arquivos novos, JSON do state, vínculos de critérios e hashes das nove fontes.",
+      "observed": "Três critérios ligados a evidências existentes; nove hashes preservados; nenhum erro de whitespace. Apenas arquivos SL-10 e harness previstos foram acrescentados nesta sessão; alterações preexistentes preservadas e nenhum commit criado. Avisos Git de ignore global e LF/CRLF sem falha.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-10; sem commit", "checkedAt": "2026-09-24T20:15:10Z"}
+    },
+    {
+      "id": "SL10-EXT", "status": "not_run",
+      "procedure": "Resposta comercial por IA, documentos e múltiplas fontes externas.",
+      "observed": "Fora do SL-10; V09 integral e C10/C12 quanto à resposta permanecem pendentes para slices posteriores.",
+      "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-10; sem commit", "checkedAt": "2026-09-24T20:15:10Z"}
+    }
+  ],
+  "slices": [
+    {
+      "id": "SL-00",
+      "title": "Criar a série documental do harness",
+      "status": "done",
+      "authorized": true,
+      "dependsOn": [],
+      "sourceIds": {
+        "PRD": [
+          "RN-01",
+          "RN-12"
+        ],
+        "SPEC": [
+          "VAL-001",
+          "VAL-002",
+          "VAL-009"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-00",
+      "releaseConditions": "Nenhuma para documentar; a execução futura dos slices depende das aprovações indicadas nas fontes.",
+      "readiness": {
+        "checked": true,
+        "initialStatus": "ready",
+        "blockers": [],
+        "basis": "Sem dependências e sem bloqueio documental no bloco SL-00; pedido atual autoriza."
+      },
+      "nextAction": "SL-00 encerrado. Aguardar autorização específica do próximo slice; conferir aprovações/bloqueadores e confirmar seams antes de qualquer teste de aplicação.",
+      "criteria": [
+        {
+          "key": "SL-00/AC1",
+          "text": "Os seis arquivos descrevem o mesmo estado real, sem marcar implementações ou testes não realizados como concluídos.",
+          "status": "passed",
+          "evidenceIds": [
+            "EV-01",
+            "EV-04"
+          ]
+        },
+        {
+          "key": "SL-00/AC2",
+          "text": "Cada slice possui referência independente ao PRD e à SPEC, dependências diretas e próxima ação; o mapa distingue cobertura planejada de evidência executada.",
+          "status": "passed",
+          "evidenceIds": [
+            "EV-01"
+          ]
+        },
+        {
+          "key": "SL-00/AC3",
+          "text": "Revisões das fontes, branch e revisão Git são registradas a partir da inspeção atual; mudanças de origem indicam quais relações precisam de revisão.",
+          "status": "passed",
+          "evidenceIds": [
+            "EV-02"
+          ]
+        },
+        {
+          "key": "SL-00/AC4",
+          "text": "Uma retomada documental permite selecionar trabalho desbloqueado e reconstruir o pacote mínimo; pendências de produto e seams ainda não confirmadas continuam explícitas.",
+          "status": "passed",
+          "evidenceIds": [
+            "EV-03",
+            "EV-05"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "SL-01",
+      "title": "Criar conta e organização isolada",
+      "status": "done",
+      "authorized": true,
+      "dependsOn": [
+        "SL-00"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-01",
+          "US-02",
+          "US-34",
+          "RN-01",
+          "C01",
+          "C02",
+          "C07",
+          "V02",
+          "V05"
+        ],
+        "SPEC": [
+          "REQ-001",
+          "AC-001",
+          "SEC-001",
+          "SEC-002",
+          "SEC-003",
+          "DAT-001",
+          "DAT-004",
+          "FT-09",
+          "ARC-002",
+          "GUD-002",
+          "PLT-001"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-01",
+      "releaseConditions": "PRD/SPEC/slice aprovados; V02/V05 para regras finais de acesso. Dependências e ambiente sujeitos às regras do repositório.",
+      "readiness": {
+        "checked": true,
+        "dependencyStatus": {
+          "SL-00": "done"
+        },
+        "scopeAuthorization": "confirmed_by_current_request",
+        "seams": "confirmed",
+        "blockers": []
+      },
+      "nextAction": "SL-01 concluído. Aguardar autorização específica do próximo slice; não iniciar SL-02 nesta sessão.",
+      "criteria": [
+        {
+          "key": "SL-01/AC1",
+          "text": "Criação atômica produz uma organização, gestor e um agente inativo; repetir comando idêntico não duplica a operação.",
+          "status": "passed",
+          "evidenceIds": [
+            "SL01-GREEN",
+            "SL01-MIGRATION"
+          ]
+        },
+        {
+          "key": "SL-01/AC2",
+          "text": "Alfa não lê nem altera Beta por troca de identificador; sessão expirada não altera dados e solicita autenticação.",
+          "status": "passed",
+          "evidenceIds": [
+            "SL01-RLS",
+            "SL01-GREEN"
+          ]
+        },
+        {
+          "key": "SL-01/AC3",
+          "text": "RLS usa papéis reais sem bypass; conexão reutilizada e contexto ausente não expõem outra organização; falha na criação não deixa organização parcial.",
+          "status": "passed",
+          "evidenceIds": [
+            "SL01-RLS",
+            "SL01-GREEN"
+          ]
+        },
+        {
+          "key": "SL-01/AC4",
+          "text": "Instalação/upgrade das migrations do percurso e verificações existentes no CI ficam reproduzíveis, com comandos efetivamente validados no handoff.",
+          "status": "passed",
+          "evidenceIds": [
+            "SL01-MIGRATION",
+            "SL01-PY",
+            "SL01-WEB"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "SL-02",
+      "title": "Salvar configuração e retomar onboarding",
+      "status": "done",
+      "authorized": true,
+      "dependsOn": [
+        "SL-01"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-03",
+          "US-04",
+          "US-12",
+          "RN-02",
+          "C03",
+          "C07",
+          "V02"
+        ],
+        "SPEC": [
+          "REQ-002",
+          "AC-002",
+          "CON-008"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-02",
+      "releaseConditions": "V02 para checklist definitivo; configuração sintética não comprova prontidão de produção.",
+      "readiness": {
+        "checked": true,
+        "dependencyStatus": {"SL-01": "done"},
+        "scopeAuthorization": "confirmed_by_current_request",
+        "seams": "confirmed",
+        "blockers": []
+      },
+      "nextAction": "SL-02 concluído. Aguardar autorização específica para outro slice; V02 segue pendente para checklist definitivo e prontidão de produção.",
+      "criteria": [
+        {"key": "SL-02/AC1", "text": "Salvar não ativa o agente; reabrir a tela preserva os valores confirmados.", "status": "passed", "evidenceIds": ["SL02-API", "SL02-WEB"]},
+        {"key": "SL-02/AC2", "text": "Ativação incompleta identifica impedimentos e conserva instruções; nenhum check ausente é tratado como aprovado.", "status": "passed", "evidenceIds": ["SL02-API", "SL02-WEB"]},
+        {"key": "SL-02/AC3", "text": "Atualização concorrente retorna conflito recuperável; sessão inválida não grava alteração.", "status": "passed", "evidenceIds": ["SL02-API"]}
+      ]
+    },
+    {
+      "id": "SL-03",
+      "title": "Cadastrar vendedores e habilitar acesso delimitado",
+      "status": "done",
+      "authorized": true,
+      "dependsOn": [
+        "SL-01"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-09",
+          "US-23",
+          "RN-01",
+          "RN-08",
+          "C02",
+          "V05"
+        ],
+        "SPEC": [
+          "REQ-001",
+          "REQ-008",
+          "SEC-001",
+          "AC-001"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-03",
+      "releaseConditions": "V05 para habilitação, permissões, elegibilidade e responsável da fila.",
+      "readiness": {
+        "checked": true,
+        "dependencyStatus": {"SL-01": "done"},
+        "scopeAuthorization": "confirmed_by_current_request",
+        "seams": "confirmed",
+        "v05SliceDecision": "Senha inicial gerada pelo sistema e exibida uma vez ao gestor; troca obrigatória antes da elegibilidade. Seleção/atribuição e responsável da fila seguem fora deste slice.",
+        "blockers": []
+      },
+      "nextAction": "SL-03 concluído. Aguardar autorização específica de outro slice; decisões V05 de seleção, atribuição e fila ainda necessárias nos consumidores futuros.",
+      "criteria": [
+        {"key": "SL-03/AC1", "text": "Cadastro isolado não concede login nem papel; habilitação segue identidade e política aprovadas.", "status": "passed", "evidenceIds": ["SL03-API", "SL03-WEB"]},
+        {"key": "SL-03/AC2", "text": "Ativo/disponível e vínculo pertencem à mesma empresa; vendedor não altera configurações globais.", "status": "passed", "evidenceIds": ["SL03-API", "SL03-WEB"]},
+        {"key": "SL-03/AC3", "text": "Revogação de vínculo impede o próximo comando mesmo com JWT ainda válido.", "status": "passed", "evidenceIds": ["SL03-API", "SL03-WEB"]}
+      ]
+    },
+    {
+      "id": "SL-04",
+      "title": "Receber contato e consultar histórico sem duplicar",
+      "status": "done",
+      "authorized": true,
+      "dependsOn": [
+        "SL-01"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-18",
+          "RN-05",
+          "RN-07",
+          "RN-12",
+          "C17",
+          "C18",
+          "C35"
+        ],
+        "SPEC": [
+          "REQ-005",
+          "REQ-007",
+          "REQ-012",
+          "AC-005",
+          "CON-001",
+          "CON-004",
+          "SEC-005",
+          "OPS-001",
+          "FT-02"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-04",
+      "releaseConditions": "Contrato normalizado da SPEC §4.2; adaptador simulado somente para desenvolvimento.",
+      "readiness": {
+        "checked": true,
+        "dependencyStatus": {"SL-01": "done"},
+        "scopeAuthorization": "confirmed_by_current_request",
+        "seams": "confirmed",
+        "blockers": []
+      },
+      "nextAction": "SL-04 concluído. Aguardar autorização específica de outro slice; transportar envelope e histórico locais para consumidores futuros.",
+      "criteria": [
+        {"key": "SL-04/AC1", "text": "Confirmar recebimento somente após persistência; falha de banco não produz sucesso nem histórico parcial.", "status": "passed", "evidenceIds": ["SL04-API"]},
+        {"key": "SL-04/AC2", "text": "Reentrega do mesmo evento não duplica lead/mensagem/trabalho; evento distinto com texto igual permanece válido.", "status": "passed", "evidenceIds": ["SL04-API"]},
+        {"key": "SL-04/AC3", "text": "Contato retoma o histórico no mesmo tenant/canal; homônimos e contatos em empresas/canais distintos não são fundidos.", "status": "passed", "evidenceIds": ["SL04-API"]},
+        {"key": "SL-04/AC4", "text": "Repetição de publicação da outbox não duplica efeito; origem da organização vem do vínculo confiável.", "status": "passed", "evidenceIds": ["SL04-API"]}
+      ]
+    },
+    {
+      "id": "SL-05",
+      "title": "Pedir humano e aparecer na fila com contexto",
+      "status": "done",
+      "authorized": true,
+      "dependsOn": [
+        "SL-03",
+        "SL-04"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-19",
+          "US-23",
+          "US-29",
+          "RN-08",
+          "C21",
+          "C22",
+          "C23",
+          "V05"
+        ],
+        "SPEC": [
+          "REQ-008",
+          "AC-008",
+          "CON-003"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-05",
+      "releaseConditions": "V05 para responsabilidade da fila; primeiro percurso usa solicitação inequívoca, sem depender do modelo.",
+      "readiness": {
+        "checked": true,
+        "dependencyStatus": {"SL-03": "done", "SL-04": "done"},
+        "scopeAuthorization": "confirmed_by_current_request",
+        "seams": "confirmed",
+        "v05SliceDecision": "Pedidos explícitos sem vendedor elegível vão para fila do gestor para atribuição manual, sem prazo prometido. Gatilho por lead pronto para conversão aguarda qualificação futura.",
+        "blockers": []
+      },
+      "nextAction": "SL-05 concluído. Aguardar autorização específica de outro slice; preservar modo awaiting_human, incidente, motivo e histórico para assunção futura.",
+      "criteria": [
+        {"key": "SL-05/AC1", "text": "Pedido humano não exige qualificação completa; registra motivo e suspende automação na conversa.", "status": "passed", "evidenceIds": ["SL05-API", "SL05-WEB"]},
+        {"key": "SL-05/AC2", "text": "Sem elegível, fila tem responsável de tratamento e próxima ação; não promete humano imediato nem retorna sozinho à IA.", "status": "passed", "evidenceIds": ["SL05-API", "SL05-WEB"]},
+        {"key": "SL-05/AC3", "text": "Falha/ausência de resumo preserva histórico e não impede encaminhamento/assunção futura.", "status": "passed", "evidenceIds": ["SL05-API", "SL05-WEB"]}
+      ]
+    },
+    {
+      "id": "SL-06",
+      "title": "Assumir e responder pelo canal simulado",
+      "status": "done",
+      "authorized": true,
+      "dependsOn": [
+        "SL-05"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-24",
+          "US-25",
+          "RN-07",
+          "RN-09",
+          "RN-12",
+          "C24",
+          "C25",
+          "C36"
+        ],
+        "SPEC": [
+          "REQ-007",
+          "REQ-009",
+          "REQ-012",
+          "DLY-001",
+          "DLY-005",
+          "DLY-007",
+          "DLY-009",
+          "AC-009",
+          "FT-03",
+          "FT-05"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-06",
+      "releaseConditions": "V05; contrato de accepted/rejected/unknown preservado desde o primeiro envio.",
+      "readiness": {
+        "checked": true,
+        "approval": "pedido explícito do usuário para SL-06; V05 manual herdado do SL-05",
+        "seams": "confirmed: POST assign/claim/messages, GET conversation/queue, dispatcher e canal simulado"
+      },
+      "nextAction": "SL-06 concluído e validado localmente; não iniciar outro slice sem pedido específico.",
+      "criteria": [
+        {"id": "SL-06/AC1", "status": "passed", "evidence": ["SL06-API", "SL06-WEB"], "note": "Claims concorrentes deixam um responsável; atribuição isolada não assume."},
+        {"id": "SL-06/AC2", "status": "passed", "evidence": ["SL06-API", "SL06-WEB"], "note": "Autor no histórico; 202 pending até dispatch; accepted mantém leitura desconhecida."},
+        {"id": "SL-06/AC3", "status": "passed", "evidence": ["SL06-API"], "note": "Rejeição comprovada e confirmação perdida distintas; unknown cria incidente e repetição não reenvia."},
+        {"id": "SL-06/AC4", "status": "passed", "evidence": ["SL06-API", "SL06-PY"], "note": "Barreira permite somente uma intenção dispatching por conversa; 4097 caracteres retornam 422 sem truncar ou persistir."}
+      ]
+    },
+    {
+      "id": "SL-07",
+      "title": "Aplicar pausa e prioridade humana na fronteira de envio",
+      "status": "done",
+      "authorized": true,
+      "dependsOn": [
+        "SL-02",
+        "SL-06"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-13",
+          "US-24",
+          "RN-02",
+          "RN-09",
+          "C24",
+          "C26",
+          "C27",
+          "C45"
+        ],
+        "SPEC": [
+          "REQ-009",
+          "AC-009",
+          "DLY-002",
+          "DLY-003",
+          "DLY-004",
+          "T01",
+          "FT-04"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-07",
+      "releaseConditions": "T01 para apresentação/aceite de controle aplicado com tentativa externa pendente.",
+      "readiness": {
+        "checked": true,
+        "approval": "pedido explícito do usuário para SL-07; T01 aprovado pelo usuário nesta sessão",
+        "seams": "confirmed: comandos API, consulta de conversa/estado na UI, sender e saída do canal simulado"
+      },
+      "nextAction": "SL-07 concluído localmente; não iniciar SL-08 sem pedido específico.",
+      "criteria": [
+        {"id": "SL-07/AC1", "status": "passed", "evidence": ["SL07-API", "SL07-WEB"], "note": "Pausa/claim antes da autorização cancelam; durante dispatch retornam 202 com controle aplicado e conclusão pendente."},
+        {"id": "SL-07/AC2", "status": "passed", "evidence": ["SL07-API"], "note": "Reativação global preserva modo humano e bloqueio de contato; resume-ai verifica ator, modo, pausa, bloqueio e incidente."},
+        {"id": "SL-07/AC3", "status": "passed", "evidence": ["SL07-API", "SL07-WEB"], "note": "Pausa preserva histórico e envio manual; retorno explícito não reabre intenção cancelada."},
+        {"id": "SL-07/AC4", "status": "passed", "evidence": ["SL07-API", "SL07-WEB"], "note": "FT-04 antes da preparação, antes da autorização e durante tentativa; controle consultável distingue accepted e unknown."}
+      ]
+    },
+    {
+      "id": "SL-08",
+      "title": "Persistir opt-out e encaminhar novo contato bloqueado",
+      "status": "done",
+      "authorized": true,
+      "dependsOn": [
+        "SL-07"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-22",
+          "RN-11",
+          "C27",
+          "C41",
+          "V04"
+        ],
+        "SPEC": [
+          "REQ-011",
+          "AC-011",
+          "AUT-006",
+          "CON-005"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-08",
+      "releaseConditions": "V04 para reautorização e eventual confirmação única; até aprovação, confirmação automática desabilitada.",
+      "readiness": {
+        "checked": true,
+        "approval": "pedido explícito para SL-08; V04 ainda pendente e funcionalidades dependentes desabilitadas",
+        "seams": "confirmed: entrada simulada, preferência/motivo na consulta da conversa, sender/saída simulada"
+      },
+      "nextAction": "SL-08 concluído localmente. V04 ainda exige aprovação antes de reautorização ou confirmação única; não iniciar outro slice sem pedido específico.",
+      "criteria": [
+        {"id": "SL-08/AC1", "status": "passed", "evidence": ["SL08-API"], "note": "Pedido inequívoco grava origem por empresa/canal/contato antes de nova autorização; intenção pendente é cancelada."},
+        {"id": "SL-08/AC2", "status": "passed", "evidence": ["SL08-API"], "note": "Nova mensagem, retry, novo chat e reativação preservam opt-out; sender e preparação recusam automação; tentativa já iniciada segue T01."},
+        {"id": "SL-08/AC3", "status": "passed", "evidence": ["SL08-API", "SL08-WEB"], "note": "Fila/histórico exibem motivo, origem e contexto; retorno à IA e desbloqueio sintético recusados. Reautorização/confirmação única indisponíveis até V04."}
+      ]
+    },
+    {
+      "id": "SL-09",
+      "title": "Recuperar trabalho interrompido sem repetir envio incerto",
+      "status": "done",
+      "authorized": true,
+      "dependsOn": [
+        "SL-08"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-32",
+          "RN-12",
+          "C35",
+          "C36",
+          "C38"
+        ],
+        "SPEC": [
+          "REQ-012",
+          "AC-012",
+          "OPS-002",
+          "OPS-003",
+          "OPS-004",
+          "OPS-006",
+          "OPS-008",
+          "DLY-006",
+          "FT-01",
+          "FT-08",
+          "FT-11",
+          "VAL-004"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-09",
+      "releaseConditions": "Parâmetros técnicos documentados e testáveis; nenhuma dependência de IA real.",
+      "readiness": {
+        "checked": true,
+        "approval": "pedido específico de SL-09 e adição de Redis/Celery locais sintéticos aprovados pelo usuário",
+        "seams": "confirmed: operação de recuperação/incidentes pela API e efeitos observáveis na conversa/canal simulado"
+      },
+      "nextAction": "SL-09 concluído no ambiente local sintético. Não iniciar SL-10 ou outro slice sem pedido específico; canal externo e tipos de job de slices futuros exigem seus próprios testes.",
+      "criteria": [
+        {"id": "SL-09/AC1", "status": "passed", "evidence": ["SL09-BROKER", "SL09-PY"], "note": "Redis perdeu mensagem isolada e scan reconstruiu outbox; crash real do worker após commit antes do ack e replay mantiveram um efeito."},
+        {"id": "SL-09/AC2", "status": "passed", "evidence": ["SL09-BROKER"], "note": "Token vencido não confirma efeito; dispatching abandonado vira unknown e executor tardio não o reabre."},
+        {"id": "SL-09/AC3", "status": "passed", "evidence": ["SL09-BROKER"], "note": "Somente falhas internas seguras recebem backoff com jitter, até cinco tentativas e prazo total; Retry-After é respeitado e esgotamento cria incidente. Unknown não é reenviado."},
+        {"id": "SL-09/AC4", "status": "passed", "evidence": ["SL09-BROKER", "SL09-FOCUSED"], "note": "Outra conversa da mesma empresa prossegue após esgotamento; incidente expõe motivo, dono e ação; resolução exige evidência e conserva unknown."}
+      ]
+    },
+    {
+      "id": "SL-10",
+      "title": "Manter catálogo comercial versionado",
+      "status": "done",
+      "authorized": true,
+      "dependsOn": [
+        "SL-02"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-07",
+          "RN-04",
+          "C10",
+          "C12",
+          "V09"
+        ],
+        "SPEC": [
+          "REQ-004",
+          "AC-004",
+          "DAT-001",
+          "DAT-005"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-10",
+      "releaseConditions": "Para D0, catálogo estruturado é a única fonte comercial com dados sintéticos; V09 integral continua aberta para múltiplas fontes.",
+      "readiness": {
+        "checked": true,
+        "approval": "pedido específico de SL-10; D0 delimitado a catálogo estruturado sintético",
+        "seams": "confirmed: API de produtos, formulário do gestor e persistência/isolamento no PostgreSQL local"
+      },
+      "nextAction": "SL-10 concluído localmente. Aguardar pedido específico para outro slice; V09 integral continua aberta para múltiplas fontes e resposta comercial não foi comprovada.",
+      "criteria": [
+        {"id": "SL-10/AC1", "status": "passed", "evidence": ["SL10-API", "SL10-WEB"], "note": "Zero retorna 0.0000, desconhecido permanece null; decimal de quatro casas é preservado e valores inválidos são recusados."},
+        {"id": "SL-10/AC2", "status": "passed", "evidence": ["SL10-API", "SL10-WEB"], "note": "Disponibilidade e revisão persistem; correção e revogação criam versões imutáveis, preservando preço/estado anteriores."},
+        {"id": "SL-10/AC3", "status": "passed", "evidence": ["SL10-API"], "note": "Escrita/leitura restritas ao gestor; Alfa não lê/edita Beta; conflito 409 não altera produto nem revisão comercial."}
+      ]
+    },
+    {
+      "id": "SL-D01",
+      "title": "Responder sobre o catálogo com OpenAI no canal de teste",
+      "status": "planned",
+      "authorized": false,
+      "dependsOn": ["SL-05", "SL-09", "SL-10"],
+      "sourceIds": {
+        "PRD": ["US-14", "US-15", "US-19", "RN-04", "RN-05", "RN-13", "C08", "C10", "C20", "C21", "C44", "V09"],
+        "SPEC": ["REQ-004", "REQ-005", "REQ-008", "REQ-013", "AC-004", "AI-001", "AI-003", "CON-002", "SEC-007", "FT-12", "FT-15"]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-d01",
+      "releaseConditions": "SL-10 concluído; modelo específico OpenAI, credencial, orçamento, massa sintética e seams aprovados.",
+      "readiness": {"checked": false, "approval": "not_confirmed", "seams": "not_confirmed"},
+      "nextAction": "Após SL-10, confirmar modelo/credencial/orçamento e seams de entrada, sender e LLMProvider; executar somente por pedido específico.",
+      "criteria": []
+    },
+    {
+      "id": "SL-D02",
+      "title": "Vincular no app um bot Telegram preexistente",
+      "status": "planned",
+      "authorized": false,
+      "dependsOn": ["SL-02", "SL-04", "SL-09"],
+      "sourceIds": {
+        "PRD": ["US-10", "RN-03", "C01", "C04", "V01"],
+        "SPEC": ["REQ-003", "AC-003", "SEC-004", "SEC-005", "EXT-001"]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-d02",
+      "releaseConditions": "Bot criado pelo usuário; token por canal seguro, segredo protegido e HTTPS alcançável autorizados; V01 completa permanece aberta.",
+      "readiness": {"checked": false, "approval": "not_confirmed", "seams": "not_confirmed"},
+      "nextAction": "Confirmar ambiente de bot/HTTPS, forma de fornecer token e seams de vínculo/webhook; executar somente por pedido específico.",
+      "criteria": []
+    },
+    {
+      "id": "SL-D03",
+      "title": "Demonstrar atendimento Telegram ponta a ponta",
+      "status": "planned",
+      "authorized": false,
+      "dependsOn": ["SL-08", "SL-D01", "SL-D02"],
+      "sourceIds": {
+        "PRD": ["US-12", "US-13", "US-14", "RN-02", "RN-03", "RN-04", "C01", "C03", "C08", "C10", "C44", "V02"],
+        "SPEC": ["REQ-002", "REQ-003", "REQ-004", "REQ-005", "AC-002", "SEC-005", "EXT-001", "VAL-004", "VAL-005"]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-d03",
+      "releaseConditions": "SL-D01/SL-D02 concluídos; modelo, bot, HTTPS e ativação D0 verificados em ambiente de teste controlado.",
+      "readiness": {"checked": false, "approval": "not_confirmed", "seams": "not_confirmed"},
+      "nextAction": "Após os dois percursos, confirmar seams E2E web/Telegram/OpenAI e roteiro de demonstração; não declarar M1 com D0.",
+      "criteria": []
+    },
+    {
+      "id": "SL-11",
+      "title": "Disponibilizar documento com estado e recuperação de falha",
+      "status": "planned",
+      "authorized": false,
+      "dependsOn": [
+        "SL-10"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-05",
+          "US-06",
+          "RN-04",
+          "C11",
+          "V06"
+        ],
+        "SPEC": [
+          "REQ-004",
+          "AC-004",
+          "SEC-006",
+          "DAT-003",
+          "DAT-005",
+          "FT-10"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-11",
+      "releaseConditions": "V06 para formatos/tamanhos; perfil de embeddings e provedor fixados conforme SPEC, sujeitos à aprovação de dependências/custo.",
+      "readiness": {
+        "checked": false,
+        "approval": "not_confirmed",
+        "seams": "not_confirmed"
+      },
+      "nextAction": "Antes de iniciar «Disponibilizar documento com estado e recuperação de falha»: obter autorização específica, conferir condições de liberação e dependências; carregar somente o bloco e suas fontes. Confirmar seams antes de escrever testes.",
+      "criteria": []
+    },
+    {
+      "id": "SL-12",
+      "title": "Responder com fonte válida ou encaminhar a dúvida",
+      "status": "planned",
+      "authorized": false,
+      "dependsOn": [
+        "SL-11",
+        "SL-D01"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-14",
+          "US-15",
+          "US-19",
+          "RN-04",
+          "RN-05",
+          "RN-13",
+          "C08",
+          "C09",
+          "C10",
+          "C20",
+          "C21",
+          "C44",
+          "C46",
+          "V09"
+        ],
+        "SPEC": [
+          "REQ-004",
+          "REQ-005",
+          "REQ-008",
+          "REQ-013",
+          "AC-004",
+          "AC-013",
+          "AI-001",
+          "AI-003",
+          "AI-004",
+          "CON-002",
+          "SEC-007",
+          "FT-12",
+          "FT-15"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-12",
+      "releaseConditions": "V09 e política comercial aplicável; primeiro ciclo usa LLMProvider fake. Modelo real somente após controles e SL-18.",
+      "readiness": {
+        "checked": false,
+        "approval": "not_confirmed",
+        "seams": "not_confirmed"
+      },
+      "nextAction": "Antes de iniciar «Responder com fonte válida ou encaminhar a dúvida»: obter autorização específica, conferir condições de liberação e dependências; carregar somente o bloco e suas fontes. Confirmar seams antes de escrever testes.",
+      "criteria": []
+    },
+    {
+      "id": "SL-13",
+      "title": "Invalidar fonte e preparação de resposta antiga",
+      "status": "planned",
+      "authorized": false,
+      "dependsOn": [
+        "SL-12"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-05",
+          "RN-02",
+          "RN-04",
+          "C12",
+          "V09"
+        ],
+        "SPEC": [
+          "REQ-004",
+          "AC-004",
+          "DLY-008",
+          "DLY-003",
+          "AI-007",
+          "FT-06",
+          "FT-14",
+          "T01"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-13",
+      "releaseConditions": "V09/T01; sender e revisão comercial já exercitados.",
+      "readiness": {
+        "checked": false,
+        "approval": "not_confirmed",
+        "seams": "not_confirmed"
+      },
+      "nextAction": "Antes de iniciar «Invalidar fonte e preparação de resposta antiga»: obter autorização específica, conferir condições de liberação e dependências; carregar somente o bloco e suas fontes. Confirmar seams antes de escrever testes.",
+      "criteria": []
+    },
+    {
+      "id": "SL-14",
+      "title": "Coletar fatos, receber mídia e preservar correções",
+      "status": "planned",
+      "authorized": false,
+      "dependsOn": [
+        "SL-12"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-16",
+          "US-17",
+          "US-18",
+          "US-20",
+          "RN-05",
+          "C13",
+          "C14",
+          "C17",
+          "C18",
+          "C19",
+          "C43"
+        ],
+        "SPEC": [
+          "REQ-005",
+          "AC-005",
+          "AI-005",
+          "AI-006",
+          "AI-007",
+          "CON-005",
+          "FT-11"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-14",
+      "releaseConditions": "V06 para mídia suportada; texto obrigatório e saída explícita para não suportada.",
+      "readiness": {
+        "checked": false,
+        "approval": "not_confirmed",
+        "seams": "not_confirmed"
+      },
+      "nextAction": "Antes de iniciar «Coletar fatos, receber mídia e preservar correções»: obter autorização específica, conferir condições de liberação e dependências; carregar somente o bloco e suas fontes. Confirmar seams antes de escrever testes.",
+      "criteria": []
+    },
+    {
+      "id": "SL-15",
+      "title": "Configurar rubrica e qualificar com evidências",
+      "status": "planned",
+      "authorized": false,
+      "dependsOn": [
+        "SL-14"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-08",
+          "US-35",
+          "RN-06",
+          "RN-08",
+          "C15",
+          "C16",
+          "C21",
+          "V03"
+        ],
+        "SPEC": [
+          "REQ-006",
+          "REQ-008",
+          "AC-006",
+          "AI-002"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-15",
+      "releaseConditions": "V03: rubrica/categorias/evidências aprovadas; não inventar score numérico.",
+      "readiness": {
+        "checked": false,
+        "approval": "not_confirmed",
+        "seams": "not_confirmed"
+      },
+      "nextAction": "Antes de iniciar «Configurar rubrica e qualificar com evidências»: obter autorização específica, conferir condições de liberação e dependências; carregar somente o bloco e suas fontes. Confirmar seams antes de escrever testes.",
+      "criteria": []
+    },
+    {
+      "id": "SL-16",
+      "title": "Corrigir classificação e concluir oportunidade por pessoa",
+      "status": "planned",
+      "authorized": false,
+      "dependsOn": [
+        "SL-07",
+        "SL-15"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-26",
+          "US-27",
+          "US-33",
+          "RN-06",
+          "RN-07",
+          "RN-09",
+          "RN-13",
+          "C28",
+          "C29",
+          "C30",
+          "C37"
+        ],
+        "SPEC": [
+          "REQ-006",
+          "REQ-007",
+          "AC-006",
+          "AC-007",
+          "CON-007",
+          "FT-07"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-16",
+      "releaseConditions": "Permissões V05; transições propostas aprovadas.",
+      "readiness": {
+        "checked": false,
+        "approval": "not_confirmed",
+        "seams": "not_confirmed"
+      },
+      "nextAction": "Antes de iniciar «Corrigir classificação e concluir oportunidade por pessoa»: obter autorização específica, conferir condições de liberação e dependências; carregar somente o bloco e suas fontes. Confirmar seams antes de escrever testes.",
+      "criteria": []
+    },
+    {
+      "id": "SL-17",
+      "title": "Consultar CRM, resumo e redistribuir responsabilidade",
+      "status": "planned",
+      "authorized": false,
+      "dependsOn": [
+        "SL-03",
+        "SL-16"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-23",
+          "US-28",
+          "US-29",
+          "US-30",
+          "RN-07",
+          "RN-08",
+          "RN-09",
+          "C02",
+          "C23",
+          "C42"
+        ],
+        "SPEC": [
+          "REQ-001",
+          "REQ-007",
+          "REQ-008",
+          "AC-001",
+          "AC-008",
+          "AI-005"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-17",
+      "releaseConditions": "V05 para redistribuição/atribuição; projeções respeitam autorização existente.",
+      "readiness": {
+        "checked": false,
+        "approval": "not_confirmed",
+        "seams": "not_confirmed"
+      },
+      "nextAction": "Antes de iniciar «Consultar CRM, resumo e redistribuir responsabilidade»: obter autorização específica, conferir condições de liberação e dependências; carregar somente o bloco e suas fontes. Confirmar seams antes de escrever testes.",
+      "criteria": []
+    },
+    {
+      "id": "SL-18",
+      "title": "Validar atendimento com modelo real versionado",
+      "status": "planned",
+      "authorized": false,
+      "dependsOn": [
+        "SL-13",
+        "SL-15",
+        "SL-17",
+        "SL-D01"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-14",
+          "US-15",
+          "US-35",
+          "OBJ-03",
+          "OBJ-07",
+          "RN-13",
+          "C20",
+          "C40",
+          "C46"
+        ],
+        "SPEC": [
+          "REQ-013",
+          "AI-008",
+          "EXT-003",
+          "FT-12",
+          "FT-15",
+          "VAL-006"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-18",
+      "releaseConditions": "Modelo/provedor, acesso e orçamento aprovados; V03/V09 para referências comerciais. Sem dados reais.",
+      "readiness": {
+        "checked": false,
+        "approval": "not_confirmed",
+        "seams": "not_confirmed"
+      },
+      "nextAction": "Antes de iniciar «Validar atendimento com modelo real versionado»: obter autorização específica, conferir condições de liberação e dependências; carregar somente o bloco e suas fontes. Confirmar seams antes de escrever testes.",
+      "criteria": []
+    },
+    {
+      "id": "SL-19",
+      "title": "Validar a experiência self-service do Telegram",
+      "status": "planned",
+      "authorized": false,
+      "dependsOn": [
+        "SL-00"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-10",
+          "RN-03",
+          "C01",
+          "C04",
+          "V01"
+        ],
+        "SPEC": [
+          "REQ-003",
+          "EXT-001",
+          "VAL-005"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-19",
+      "releaseConditions": "V01 em aberto; acesso/ambiente controlado autorizado para o spike.",
+      "readiness": {
+        "checked": false,
+        "approval": "not_confirmed",
+        "seams": "not_confirmed"
+      },
+      "nextAction": "Antes de iniciar «Validar a experiência self-service do Telegram»: obter autorização específica, conferir condições de liberação e dependências; carregar somente o bloco e suas fontes. Confirmar seams antes de escrever testes.",
+      "criteria": []
+    },
+    {
+      "id": "SL-20",
+      "title": "Conectar Telegram e retomar provisionamento",
+      "status": "planned",
+      "authorized": false,
+      "dependsOn": [
+        "SL-19",
+        "SL-D02"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-10",
+          "US-32",
+          "RN-03",
+          "C04"
+        ],
+        "SPEC": [
+          "REQ-003",
+          "AC-003",
+          "SEC-004",
+          "EXT-001"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-20",
+      "releaseConditions": "V01 resolvida com experiência aprovada; credenciais e ambiente controlado autorizados.",
+      "readiness": {
+        "checked": false,
+        "approval": "not_confirmed",
+        "seams": "not_confirmed"
+      },
+      "nextAction": "Antes de iniciar «Conectar Telegram e retomar provisionamento»: obter autorização específica, conferir condições de liberação e dependências; carregar somente o bloco e suas fontes. Confirmar seams antes de escrever testes.",
+      "criteria": []
+    },
+    {
+      "id": "SL-21",
+      "title": "Ativar e atender a primeira conversa no Telegram",
+      "status": "planned",
+      "authorized": false,
+      "dependsOn": [
+        "SL-18",
+        "SL-20",
+        "SL-D03"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-12",
+          "US-13",
+          "US-14",
+          "RN-02",
+          "RN-03",
+          "C01",
+          "C03",
+          "C08",
+          "C44",
+          "V02"
+        ],
+        "SPEC": [
+          "REQ-002",
+          "REQ-005",
+          "AC-002",
+          "SEC-005",
+          "EXT-001",
+          "VAL-005"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-21",
+      "releaseConditions": "V01/V02/V03/V05/V06/V09/T01 aplicáveis resolvidas; modelo aprovado em SL-18.",
+      "readiness": {
+        "checked": false,
+        "approval": "not_confirmed",
+        "seams": "not_confirmed"
+      },
+      "nextAction": "Antes de iniciar «Ativar e atender a primeira conversa no Telegram»: obter autorização específica, conferir condições de liberação e dependências; carregar somente o bloco e suas fontes. Confirmar seams antes de escrever testes.",
+      "criteria": []
+    },
+    {
+      "id": "SL-22",
+      "title": "Configurar política e enviar um follow-up elegível",
+      "status": "planned",
+      "authorized": false,
+      "dependsOn": [
+        "SL-15",
+        "SL-21"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-21",
+          "US-31",
+          "RN-10",
+          "C31",
+          "V04"
+        ],
+        "SPEC": [
+          "REQ-010",
+          "AC-010",
+          "AUT-001",
+          "AUT-002",
+          "AUT-003"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-22",
+      "releaseConditions": "V04 aprovada; valores sintéticos da SPEC não são defaults comerciais.",
+      "readiness": {
+        "checked": false,
+        "approval": "not_confirmed",
+        "seams": "not_confirmed"
+      },
+      "nextAction": "Antes de iniciar «Configurar política e enviar um follow-up elegível»: obter autorização específica, conferir condições de liberação e dependências; carregar somente o bloco e suas fontes. Confirmar seams antes de escrever testes.",
+      "criteria": []
+    },
+    {
+      "id": "SL-23",
+      "title": "Cancelar follow-up e respeitar janela, validade e limite",
+      "status": "planned",
+      "authorized": false,
+      "dependsOn": [
+        "SL-16",
+        "SL-22"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-21",
+          "US-22",
+          "RN-10",
+          "RN-11",
+          "RN-12",
+          "C26",
+          "C27",
+          "C30",
+          "C32",
+          "C33",
+          "C34",
+          "V04"
+        ],
+        "SPEC": [
+          "REQ-010",
+          "REQ-011",
+          "AC-010",
+          "AC-011",
+          "AUT-003",
+          "AUT-004",
+          "AUT-005",
+          "FT-13"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-23",
+      "releaseConditions": "V04; controles e terminalidade já entregues.",
+      "readiness": {
+        "checked": false,
+        "approval": "not_confirmed",
+        "seams": "not_confirmed"
+      },
+      "nextAction": "Antes de iniciar «Cancelar follow-up e respeitar janela, validade e limite»: obter autorização específica, conferir condições de liberação e dependências; carregar somente o bloco e suas fontes. Confirmar seams antes de escrever testes.",
+      "criteria": []
+    },
+    {
+      "id": "SL-24",
+      "title": "Consultar operação e indicadores com custo explícito",
+      "status": "planned",
+      "authorized": false,
+      "dependsOn": [
+        "SL-17",
+        "SL-23"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-32",
+          "US-38",
+          "OBJ-01",
+          "OBJ-02",
+          "OBJ-03",
+          "OBJ-04",
+          "OBJ-05",
+          "OBJ-06",
+          "OBJ-07",
+          "OBJ-08",
+          "RN-15",
+          "C02",
+          "C36",
+          "C38",
+          "C44"
+        ],
+        "SPEC": [
+          "REQ-015",
+          "AC-015",
+          "SEC-004",
+          "VAL-009"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-24",
+      "releaseConditions": "V08 para metas comerciais; métricas e amostra não implicam SLA aprovado.",
+      "readiness": {
+        "checked": false,
+        "approval": "not_confirmed",
+        "seams": "not_confirmed"
+      },
+      "nextAction": "Antes de iniciar «Consultar operação e indicadores com custo explícito»: obter autorização específica, conferir condições de liberação e dependências; carregar somente o bloco e suas fontes. Confirmar seams antes de escrever testes.",
+      "criteria": []
+    },
+    {
+      "id": "SL-25",
+      "title": "Comprovar o marco M1 no Telegram",
+      "status": "planned",
+      "authorized": false,
+      "dependsOn": [
+        "SL-24"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-37",
+          "RN-14",
+          "C01",
+          "C02",
+          "C40"
+        ],
+        "SPEC": [
+          "VAL-001",
+          "VAL-002",
+          "VAL-003",
+          "VAL-004",
+          "VAL-005",
+          "VAL-006",
+          "VAL-009",
+          "VAL-010"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-25",
+      "releaseConditions": "Todos os antecessores transitivos de SL-24 completos; decisões aplicáveis de M1 resolvidas.",
+      "readiness": {
+        "checked": false,
+        "approval": "not_confirmed",
+        "seams": "not_confirmed"
+      },
+      "nextAction": "Antes de iniciar «Comprovar o marco M1 no Telegram»: obter autorização específica, conferir condições de liberação e dependências; carregar somente o bloco e suas fontes. Confirmar seams antes de escrever testes.",
+      "criteria": []
+    },
+    {
+      "id": "SL-26",
+      "title": "Comprovar contrato da release Evolution",
+      "status": "planned",
+      "authorized": false,
+      "dependsOn": [
+        "SL-25"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-11",
+          "RN-03",
+          "RN-12",
+          "RN-14",
+          "C05",
+          "C06",
+          "C39"
+        ],
+        "SPEC": [
+          "REQ-003",
+          "REQ-014",
+          "EXT-002",
+          "SEC-005",
+          "COM-002"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-26",
+      "releaseConditions": "Release, ambiente/número controlado e uso da integração autorizados; risco do canal não oficial explícito.",
+      "readiness": {
+        "checked": false,
+        "approval": "not_confirmed",
+        "seams": "not_confirmed"
+      },
+      "nextAction": "Antes de iniciar «Comprovar contrato da release Evolution»: obter autorização específica, conferir condições de liberação e dependências; carregar somente o bloco e suas fontes. Confirmar seams antes de escrever testes.",
+      "criteria": []
+    },
+    {
+      "id": "SL-27",
+      "title": "Conectar WhatsApp e renovar QR expirado",
+      "status": "planned",
+      "authorized": false,
+      "dependsOn": [
+        "SL-26"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-11",
+          "RN-03",
+          "C05"
+        ],
+        "SPEC": [
+          "REQ-003",
+          "AC-003",
+          "SEC-004",
+          "EXT-002"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-27",
+      "releaseConditions": "Contrato comprovado em SL-26 e operação controlada autorizada.",
+      "readiness": {
+        "checked": false,
+        "approval": "not_confirmed",
+        "seams": "not_confirmed"
+      },
+      "nextAction": "Antes de iniciar «Conectar WhatsApp e renovar QR expirado»: obter autorização específica, conferir condições de liberação e dependências; carregar somente o bloco e suas fontes. Confirmar seams antes de escrever testes.",
+      "criteria": []
+    },
+    {
+      "id": "SL-28",
+      "title": "Atender no WhatsApp com o mesmo domínio",
+      "status": "planned",
+      "authorized": false,
+      "dependsOn": [
+        "SL-27"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-36",
+          "RN-05",
+          "RN-12",
+          "RN-14",
+          "C08",
+          "C35",
+          "C36",
+          "C39"
+        ],
+        "SPEC": [
+          "REQ-005",
+          "REQ-012",
+          "REQ-014",
+          "AC-012",
+          "AC-014",
+          "DLY-005",
+          "DLY-007",
+          "EXT-002"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-28",
+      "releaseConditions": "SL-27 conectado; mesma configuração comercial aprovada usada no Telegram.",
+      "readiness": {
+        "checked": false,
+        "approval": "not_confirmed",
+        "seams": "not_confirmed"
+      },
+      "nextAction": "Antes de iniciar «Atender no WhatsApp com o mesmo domínio»: obter autorização específica, conferir condições de liberação e dependências; carregar somente o bloco e suas fontes. Confirmar seams antes de escrever testes.",
+      "criteria": []
+    },
+    {
+      "id": "SL-29",
+      "title": "Recuperar WhatsApp sem interromper Telegram",
+      "status": "planned",
+      "authorized": false,
+      "dependsOn": [
+        "SL-28"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-11",
+          "US-32",
+          "RN-03",
+          "RN-10",
+          "RN-12",
+          "C06",
+          "C34",
+          "C38"
+        ],
+        "SPEC": [
+          "REQ-003",
+          "REQ-010",
+          "REQ-012",
+          "OPS-005",
+          "OPS-007",
+          "AUT-005",
+          "AC-012"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-29",
+      "releaseConditions": "Ambiente com os dois canais conectados e cenários de falha controlados.",
+      "readiness": {
+        "checked": false,
+        "approval": "not_confirmed",
+        "seams": "not_confirmed"
+      },
+      "nextAction": "Antes de iniciar «Recuperar WhatsApp sem interromper Telegram»: obter autorização específica, conferir condições de liberação e dependências; carregar somente o bloco e suas fontes. Confirmar seams antes de escrever testes.",
+      "criteria": []
+    },
+    {
+      "id": "SL-30",
+      "title": "Comprovar M2 e fechar cobertura multicanal",
+      "status": "planned",
+      "authorized": false,
+      "dependsOn": [
+        "SL-29"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-36",
+          "US-37",
+          "RN-14",
+          "C05",
+          "C06",
+          "C39",
+          "C40"
+        ],
+        "SPEC": [
+          "REQ-014",
+          "AC-014",
+          "VAL-001",
+          "VAL-002",
+          "VAL-010"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-30",
+      "releaseConditions": "M1 evidenciado; decisões e integrações aplicáveis a M2 resolvidas.",
+      "readiness": {
+        "checked": false,
+        "approval": "not_confirmed",
+        "seams": "not_confirmed"
+      },
+      "nextAction": "Antes de iniciar «Comprovar M2 e fechar cobertura multicanal»: obter autorização específica, conferir condições de liberação e dependências; carregar somente o bloco e suas fontes. Confirmar seams antes de escrever testes.",
+      "criteria": []
+    },
+    {
+      "id": "SL-31",
+      "title": "Medir carga, justiça e custo antes do piloto",
+      "status": "planned",
+      "authorized": false,
+      "dependsOn": [
+        "SL-30"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-38",
+          "OBJ-02",
+          "OBJ-08",
+          "V08"
+        ],
+        "SPEC": [
+          "REQ-015",
+          "DAT-002",
+          "DAT-004",
+          "OPS-005",
+          "VAL-008"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-31",
+      "releaseConditions": "V08 para volume/orçamento/metas reais; ambiente de carga isolado e custos autorizados.",
+      "readiness": {
+        "checked": false,
+        "approval": "not_confirmed",
+        "seams": "not_confirmed"
+      },
+      "nextAction": "Antes de iniciar «Medir carga, justiça e custo antes do piloto»: obter autorização específica, conferir condições de liberação e dependências; carregar somente o bloco e suas fontes. Confirmar seams antes de escrever testes.",
+      "criteria": []
+    },
+    {
+      "id": "SL-32",
+      "title": "Aplicar política de dados e exclusão com jobs pendentes",
+      "status": "planned",
+      "authorized": false,
+      "dependsOn": [
+        "SL-30"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "RN-01",
+          "RN-15",
+          "V07"
+        ],
+        "SPEC": [
+          "SEC-008",
+          "COM-001",
+          "FT-14",
+          "VAL-009"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-32",
+      "releaseConditions": "V07 aprovada antes de qualquer piloto com dados reais.",
+      "readiness": {
+        "checked": false,
+        "approval": "not_confirmed",
+        "seams": "not_confirmed"
+      },
+      "nextAction": "Antes de iniciar «Aplicar política de dados e exclusão com jobs pendentes»: obter autorização específica, conferir condições de liberação e dependências; carregar somente o bloco e suas fontes. Confirmar seams antes de escrever testes.",
+      "criteria": []
+    },
+    {
+      "id": "SL-33",
+      "title": "Restaurar operação com automação inicialmente bloqueada",
+      "status": "planned",
+      "authorized": false,
+      "dependsOn": [
+        "SL-31",
+        "SL-32"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "RN-12",
+          "RN-15",
+          "OBJ-05",
+          "V07",
+          "V08"
+        ],
+        "SPEC": [
+          "INF-004",
+          "VAL-007",
+          "SEC-008",
+          "CON-005"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-33",
+      "releaseConditions": "V07/V08 para retenção/RPO/RTO; ambiente e operações de backup/restore autorizados.",
+      "readiness": {
+        "checked": false,
+        "approval": "not_confirmed",
+        "seams": "not_confirmed"
+      },
+      "nextAction": "Antes de iniciar «Restaurar operação com automação inicialmente bloqueada»: obter autorização específica, conferir condições de liberação e dependências; carregar somente o bloco e suas fontes. Confirmar seams antes de escrever testes.",
+      "criteria": []
+    },
+    {
+      "id": "SL-34",
+      "title": "Revisar prontidão documental e operacional do piloto",
+      "status": "planned",
+      "authorized": false,
+      "dependsOn": [
+        "SL-33"
+      ],
+      "sourceIds": {
+        "PRD": [
+          "US-38",
+          "OBJ-01",
+          "OBJ-02",
+          "OBJ-03",
+          "OBJ-04",
+          "OBJ-05",
+          "OBJ-06",
+          "OBJ-07",
+          "OBJ-08",
+          "V07",
+          "V08"
+        ],
+        "SPEC": [
+          "VAL-001",
+          "VAL-002",
+          "VAL-003",
+          "VAL-004",
+          "VAL-005",
+          "VAL-006",
+          "VAL-007",
+          "VAL-008",
+          "VAL-009",
+          "VAL-010"
+        ]
+      },
+      "sourcePath": "doc-specs/implementation-slices.md#sl-34",
+      "releaseConditions": "M1/M2 comprovados, V07/V08 resolvidas e demais decisões aplicáveis aprovadas.",
+      "readiness": {
+        "checked": false,
+        "approval": "not_confirmed",
+        "seams": "not_confirmed"
+      },
+      "nextAction": "Antes de iniciar «Revisar prontidão documental e operacional do piloto»: obter autorização específica, conferir condições de liberação e dependências; carregar somente o bloco e suas fontes. Confirmar seams antes de escrever testes.",
+      "criteria": []
+    }
+  ]
 }
-

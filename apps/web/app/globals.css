@@ -1,0 +1,31 @@
+:root { color-scheme: light; --ink: #172033; --muted: #5f6b82; --brand: #2563eb; --surface: #fff; --line: #d9e1ef; }
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; background: #f4f7fb; color: var(--ink); font-family: Arial, sans-serif; }
+main { width: min(720px, calc(100% - 32px)); margin: 48px auto; }
+.eyebrow { color: var(--brand); font-size: .8rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+h1 { margin: 8px 0; font-size: clamp(2rem, 7vw, 3.5rem); line-height: 1.05; }
+p { color: var(--muted); line-height: 1.5; }
+form, .operation { margin-top: 28px; padding: 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 16px 40px #17315c12; }
+label { display: grid; gap: 7px; margin-top: 16px; font-weight: 700; }
+input, textarea { width: 100%; min-height: 44px; border: 1px solid #aebbd0; border-radius: 9px; padding: 10px 12px; font: inherit; }
+textarea { resize: vertical; }
+input:focus, textarea:focus { outline: 3px solid #93c5fd; outline-offset: 2px; border-color: var(--brand); }
+button { margin-top: 22px; min-height: 44px; border: 0; border-radius: 9px; padding: 10px 18px; background: var(--brand); color: white; font-weight: 700; cursor: pointer; }
+button:disabled { cursor: wait; opacity: .65; }
+.error { color: #b42318; font-weight: 700; }
+.operation strong { color: var(--brand); }
+.mode-buttons { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.mode-buttons button { margin: 0; }
+.mode-buttons button[aria-pressed="false"] { background: #e5ecf7; color: var(--ink); }
+li { margin-block: 8px; line-height: 1.5; }
+.inline-form { margin-top: 12px; padding: 0; border: 0; border-radius: 0; box-shadow: none; }
+.checkbox { display: flex; align-items: center; gap: 10px; }
+.checkbox input { width: 20px; min-height: 20px; }
+.seller-list { padding-left: 20px; }
+.seller-list button { margin: 10px 10px 0 0; }
+.human-queue-list { padding-left: 20px; }
+.human-queue-list li { padding: 14px 0; border-bottom: 1px solid var(--line); }
+.human-queue-list button { margin-top: 0; }
+.human-history { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--line); }
+code { overflow-wrap: anywhere; }
+.sign-out { margin-top: 0; background: #e5ecf7; color: var(--ink); }
