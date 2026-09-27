@@ -1,8 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-
-const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
+import { ArrowRight, Ban, Bot, Headset, Inbox, MessageSquare, RefreshCw, Send, UserCheck } from "lucide-react";
+import { Badge, EmptyState, Notice, initials } from "./components/ui";
+import { apiUrl } from "./lib/api";
+import { deliveryLabel, modeLabel } from "./lib/labels";
 type Session = { token: string; organizationId: string; role?: "gestor" | "vendedor" };
 type QueueItem = {
   id: string;
@@ -122,56 +124,91 @@ export default function HumanQueue({ session }: { session: Session }) {
     setReplyText("");
   }
 
-  return <section className="operation" aria-labelledby="human-queue-title">
-    <h2 id="human-queue-title">Fila de atendimento humano</h2>
-    <p>Pedidos de atendimento humano e respostas pelo canal simulado.</p>
-    <button type="button" onClick={() => void refresh()} disabled={loading}>Atualizar fila</button>
-    {error && <p className="error" role="alert">{error}</p>}
-    {controlNotice && <p role="status">{controlNotice}</p>}
-    {controlId && <button type="button" onClick={() => void checkControl()}>Verificar envio anterior</button>}
-    {!loading && items.length === 0 && !error && <p>Nenhum pedido pendente.</p>}
-    {items.length > 0 && <ul className="human-queue-list">{items.map((item) => <li key={item.id}>
-      <strong>{item.leadName || "Contato sem nome"}</strong>
-      <p>Motivo: {item.reason === "opt_out" ? "pedido para parar mensagens automáticas"
-        : "pedido explícito de atendimento humano"}.</p>
-      <p>Próxima ação: {item.nextAction}</p>
-      <p>{item.assignedSellerId ? "Vendedor atribuído" : "Sem vendedor atribuído"} ·
-        {item.claimedBy ? " Atendimento assumido" : " Aguardando assunção"}</p>
-      <button type="button" onClick={() => void openHistory(item.conversationId)} disabled={loading}>
-        Ver histórico de {item.leadName || "contato sem nome"}
-      </button>
-    </li>)}</ul>}
-    {selected && <div className="human-history" aria-live="polite">
-      <h3>Histórico de atendimento</h3>
-      <p>Modo: {selected.mode === "awaiting_human" ? "aguardando humano" : selected.mode}</p>
-      <p>Resumo: {selected.summaryStatus === "ready" && selected.summary
-        ? selected.summary : "indisponível; consulte as mensagens abaixo"}</p>
-      {selected.optOut ? <p role="status">Opt-out ativo neste canal: pedido para parar mensagens
-        automáticas. Origem: evento {selected.optOut.sourceEventId}. Recebido em
-        {" "}{new Date(selected.optOut.createdAt).toLocaleString("pt-BR")}. Nova mensagem não reautoriza
-        a automação; atender manualmente.</p>
-        : selected.contactBlocked && <p>Contato bloqueado nesta conversa.</p>}
-      <ol>{selected.messages.map((message) => <li key={message.id}>{message.text}</li>)}</ol>
-      {!selected.claimedBy && <button type="button" disabled={loading}
-        onClick={() => void postAction(`conversations/${selected.id}/claim`,
-          { version: selected.controlVersion })}>Assumir conversa</button>}
-      {selected.mode === "human" && <form onSubmit={(event) => void sendReply(event)}>
-        <label>Resposta manual<textarea value={replyText} maxLength={4096} required
-          onChange={(event) => setReplyText(event.target.value)} /></label>
-        <button disabled={loading || !replyText.trim()}>Registrar resposta</button>
-      </form>}
-      {selected.mode === "human" && <button type="button"
-        disabled={loading || selected.contactBlocked || selected.optOut !== null}
-        onClick={() => void postAction(`conversations/${selected.id}/resume-ai`,
-          { version: selected.controlVersion })}>Retomar IA simulada</button>}
-      <h4>Respostas manuais</h4>
-      <ol>{selected.outboundIntents.map((intent) => <li key={intent.id}>
-        <p>{intent.text}</p>
-        <p>Autor: {intent.authorId} · Envio: {intent.status} · Leitura: não confirmada</p>
-        {intent.status === "unknown" && <p>Envio incerto. Verifique o canal antes de nova ação; esta intenção não será reenviada.</p>}
-        {intent.status === "pending" && <button type="button" disabled={loading}
-          onClick={() => void postAction(`test-dispatch/${intent.id}`)}>Processar envio simulado</button>}
-      </li>)}</ol>
-    </div>}
+  return <section className="card queue" aria-labelledby="human-queue-title">
+    <div className="card-header">
+      <div><h2 id="human-queue-title"><Headset size={18} aria-hidden="true" />Fila de atendimento humano</h2>
+        <p className="muted small">Pedidos de atendimento humano e respostas pelo canal simulado.</p></div>
+      <div className="button-row">
+        {controlId && <button type="button" className="btn btn-sm btn-secondary"
+          onClick={() => void checkControl()}>Verificar envio anterior</button>}
+        <button type="button" className="btn btn-sm btn-ghost" onClick={() => void refresh()} disabled={loading}>
+          <RefreshCw size={14} aria-hidden="true" className={loading ? "spin" : undefined} />Atualizar fila</button>
+      </div>
+    </div>
+    {error && <Notice tone="error">{error}</Notice>}
+    {controlNotice && <Notice tone="info">{controlNotice}</Notice>}
+    <div className="queue-panes">
+      <div className="queue-list">
+        {!loading && items.length === 0 && !error && <EmptyState icon={<Inbox size={22} />} title="Nenhum pedido pendente.">
+          Quando um lead pedir para falar com uma pessoa, ele aparece aqui.</EmptyState>}
+        {items.length > 0 && <ul className="entity-list">{items.map((item) => {
+          const name = item.leadName || "Contato sem nome";
+          return <li key={item.id} className={selected?.id === item.conversationId ? "queue-item selected" : "queue-item"}>
+            <div className="queue-item-head">
+              <span className="avatar avatar-sm">{initials(name)}</span>
+              <strong>{name}</strong>
+              <Badge tone={item.reason === "opt_out" ? "danger" : "warning"}>
+                {item.reason === "opt_out" ? "Opt-out" : "Pediu humano"}</Badge>
+            </div>
+            <p>Motivo: {item.reason === "opt_out" ? "pedido para parar mensagens automáticas"
+              : "pedido explícito de atendimento humano"}.</p>
+            <p className="queue-next"><ArrowRight size={14} aria-hidden="true" />Próxima ação: {item.nextAction}</p>
+            <div className="badge-row">
+              <Badge tone={item.assignedSellerId ? "success" : "neutral"}>
+                {item.assignedSellerId ? "Vendedor atribuído" : "Sem vendedor atribuído"}</Badge>
+              <Badge tone={item.claimedBy ? "success" : "warning"}>
+                {item.claimedBy ? "Atendimento assumido" : "Aguardando assunção"}</Badge>
+            </div>
+            <button type="button" className="btn btn-sm btn-secondary" disabled={loading}
+              onClick={() => void openHistory(item.conversationId)} aria-label={`Ver histórico de ${name}`}>
+              Abrir conversa</button>
+          </li>;
+        })}</ul>}
+      </div>
+      <div className="queue-detail">
+        {!selected ? <EmptyState icon={<MessageSquare size={22} />} title="Selecione uma conversa">
+          O histórico, o resumo e as ações de atendimento aparecem aqui.</EmptyState>
+          : <div className="human-history" aria-live="polite">
+            <div className="card-header card-header-sub"><h3>Histórico de atendimento</h3>
+              <Badge tone={selected.mode === "human" ? "success" : selected.mode === "awaiting_human" ? "warning" : "info"}>
+                Modo: {modeLabel(selected.mode)}</Badge></div>
+            <p className="summary"><strong>Resumo:</strong> {selected.summaryStatus === "ready" && selected.summary
+              ? selected.summary : "indisponível; consulte as mensagens abaixo"}</p>
+            {selected.optOut ? <div className="notice notice-error"><Ban size={18} aria-hidden="true" />
+              <p role="status">Opt-out ativo neste canal: pedido para parar mensagens
+                automáticas. Origem: evento {selected.optOut.sourceEventId}. Recebido em
+                {" "}{new Date(selected.optOut.createdAt).toLocaleString("pt-BR")}. Nova mensagem não reautoriza
+                a automação; atender manualmente.</p></div>
+              : selected.contactBlocked && <Notice tone="info">Contato bloqueado nesta conversa.</Notice>}
+            <ol className="chat-list">{selected.messages.map((message) => <li key={message.id} className="bubble bubble-in">
+              <span className="bubble-author">Lead · {new Date(message.receivedAt).toLocaleString("pt-BR")}</span>
+              {message.text}</li>)}
+              {selected.outboundIntents.map((intent) => <li key={intent.id} className="bubble bubble-out">
+                <span className="bubble-author">Resposta manual</span>
+                <p>{intent.text}</p>
+                <small>Autor: {intent.authorId} · Envio: {deliveryLabel(intent.status)} · Leitura: não confirmada</small>
+                {intent.status === "unknown" && <small className="bubble-warning">Envio incerto. Verifique o canal antes
+                  de nova ação; esta intenção não será reenviada.</small>}
+                {intent.status === "pending" && <button type="button" className="btn btn-sm btn-secondary" disabled={loading}
+                  onClick={() => void postAction(`test-dispatch/${intent.id}`)}>Processar envio simulado</button>}
+              </li>)}</ol>
+            <div className="button-row">
+              {!selected.claimedBy && <button type="button" className="btn" disabled={loading}
+                onClick={() => void postAction(`conversations/${selected.id}/claim`,
+                  { version: selected.controlVersion })}><UserCheck size={16} aria-hidden="true" />Assumir conversa</button>}
+              {selected.mode === "human" && <button type="button" className="btn btn-ghost"
+                disabled={loading || selected.contactBlocked || selected.optOut !== null}
+                onClick={() => void postAction(`conversations/${selected.id}/resume-ai`,
+                  { version: selected.controlVersion })}><Bot size={16} aria-hidden="true" />Retomar IA simulada</button>}
+            </div>
+            {selected.mode === "human" && <form onSubmit={(event) => void sendReply(event)} className="reply-box">
+              <label>Resposta manual<textarea value={replyText} maxLength={4096} required rows={3}
+                placeholder="Escreva sua resposta ao lead…" onChange={(event) => setReplyText(event.target.value)} /></label>
+              <button className="btn" disabled={loading || !replyText.trim()}>
+                <Send size={16} aria-hidden="true" />Registrar resposta</button>
+            </form>}
+          </div>}
+      </div>
+    </div>
   </section>;
 }

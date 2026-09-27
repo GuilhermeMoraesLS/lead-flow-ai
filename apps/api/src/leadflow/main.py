@@ -1,7 +1,9 @@
 import os
+import re
 import secrets
 import time
 from datetime import UTC, datetime, timedelta
+from decimal import Decimal
 from hashlib import sha256
 from typing import Annotated, Any, Literal
 from uuid import UUID, uuid4
@@ -15,9 +17,12 @@ from sqlalchemy import Connection, text
 from sqlalchemy.exc import DBAPIError, SQLAlchemyError
 
 from leadflow.auth import actor_id
+from leadflow.catalog_agent import MAX_COST_USD, MODEL, PROMPT_VERSION, Selection, select_product
 from leadflow.database import transaction
+from leadflow.telegram import router as telegram_router
 
 app = FastAPI(title="LeadFlow API", version="1.0.0")
+app.include_router(telegram_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://127.0.0.1:3000", "http://localhost:3000"],
@@ -48,6 +53,12 @@ class OrganizationView(BaseModel):
     automation_epoch: int
     version: int
     agent: AgentView
+
+
+class MembershipView(BaseModel):
+    id: UUID
+    name: str
+    role: str
 
 
 class AgentConfigurationInput(BaseModel):
@@ -195,6 +206,13 @@ def is_explicit_human_request(value: str) -> bool:
     }
 
 
+def is_greeting(value: str) -> bool:
+    normalized = re.sub(r"[^\w]+", " ", value.casefold(), flags=re.UNICODE).strip()
+    return normalized in {"oi", "ola", "olá", "bom dia", "boa tarde", "boa noite",
+                          "e ai", "e aí", "oi tudo bem", "ola tudo bem",
+                          "olá tudo bem"}
+
+
 def is_explicit_opt_out(value: str) -> bool:
     return value.casefold().strip().rstrip(".!? ") in {
         "não quero mais mensagens automáticas",
@@ -313,6 +331,28 @@ def create_organization(
         return response
 
 
+@app.get("/v1/me/organizations", response_model=list[MembershipView])
+def list_own_organizations(actor: Actor) -> list[dict[str, Any]]:
+    # Organization rows are only visible with the organization scope set, so read each name
+    # inside its own scope after listing the actor's active memberships.
+    with transaction(actor) as conn:
+        memberships = conn.execute(
+            text("""SELECT organization_id, role FROM app.org_members
+                WHERE user_id = :actor AND status = 'active' ORDER BY created_at"""),
+            {"actor": actor},
+        ).mappings().all()
+        result = []
+        for membership in memberships:
+            org = membership["organization_id"]
+            conn.execute(text("SELECT set_config('app.organization_id', :org, true)"),
+                         {"org": str(org)})
+            name = conn.execute(text("SELECT name FROM app.organizations WHERE id = :org"),
+                                {"org": org}).scalar_one_or_none()
+            if name is not None:
+                result.append({"id": org, "name": name, "role": membership["role"]})
+        return result
+
+
 @app.get("/v1/orgs/{org}", response_model=OrganizationView)
 def get_organization(org: UUID, actor: Actor) -> dict[str, Any]:
     with transaction(actor, org) as conn:
@@ -403,11 +443,16 @@ def create_product(org: UUID, body: ProductInput, actor: Actor) -> dict[str, Any
     with transaction(actor, org) as conn:
         require_catalog_manager(conn, org)
         revision = advance_commercial_revision(conn, org)
-        row = conn.execute(text("""INSERT INTO app.products
-            (organization_id, name, price, available, commercial_revision, created_by)
-            VALUES (:org, :name, :price, :available, :revision, private.actor_id())
-            RETURNING id, name, price::text AS price, available, status, version, commercial_revision"""),
-            {"org": org, **body.model_dump(), "revision": revision}).mappings().one()
+        try:
+            row = conn.execute(text("""INSERT INTO app.products
+                (organization_id, name, price, available, commercial_revision, created_by)
+                VALUES (:org, :name, :price, :available, :revision, private.actor_id())
+                RETURNING id, name, price::text AS price, available, status, version, commercial_revision"""),
+                {"org": org, **body.model_dump(), "revision": revision}).mappings().one()
+        except DBAPIError as exc:
+            if getattr(exc.orig, "sqlstate", None) == "23505":
+                raise HTTPException(409, "Já existe produto vigente com esse nome.") from None
+            raise
         record_product_version(conn, org, row["id"])
         return product_view(row)
 
@@ -417,14 +462,19 @@ def update_product(org: UUID, product: UUID, body: ProductUpdate, actor: Actor) 
     with transaction(actor, org) as conn:
         require_catalog_manager(conn, org)
         revision = advance_commercial_revision(conn, org)
-        row = conn.execute(text("""UPDATE app.products
-            SET name = :name, price = :price, available = :available,
-                version = version + 1, commercial_revision = :revision, updated_at = now()
-            WHERE organization_id = :org AND id = :product AND version = :version
-                AND status = 'ready'
-            RETURNING id, name, price::text AS price, available, status, version, commercial_revision"""),
-            {"org": org, "product": product, **body.model_dump(), "revision": revision})\
-            .mappings().first()
+        try:
+            row = conn.execute(text("""UPDATE app.products
+                SET name = :name, price = :price, available = :available,
+                    version = version + 1, commercial_revision = :revision, updated_at = now()
+                WHERE organization_id = :org AND id = :product AND version = :version
+                    AND status = 'ready'
+                RETURNING id, name, price::text AS price, available, status, version, commercial_revision"""),
+                {"org": org, "product": product, **body.model_dump(), "revision": revision})\
+                .mappings().first()
+        except DBAPIError as exc:
+            if getattr(exc.orig, "sqlstate", None) == "23505":
+                raise HTTPException(409, "Já existe produto vigente com esse nome.") from None
+            raise
         if row is None:
             exists = conn.execute(text("SELECT 1 FROM app.products WHERE organization_id = :org AND id = :product"),
                                   {"org": org, "product": product}).first()
@@ -537,6 +587,194 @@ def create_test_auto_intent(
                 raise HTTPException(403, "Resposta automática inelegível.") from None
             raise
     return {"intentId": str(intent), "status": "pending"}
+
+
+@app.post("/v1/orgs/{org}/conversations/{conversation}/test-catalog-reply", status_code=202)
+def create_test_catalog_reply(org: UUID, conversation: UUID, actor: Actor) -> Any:
+    if os.environ.get("APP_ENV") != "local":
+        raise HTTPException(404, "Simulação indisponível.")
+    with transaction(actor, org) as conn:
+        operation = read_operation(conn, org)
+        if operation["role"] != "gestor":
+            raise HTTPException(403, "Acesso de gestor necessário.")
+        organization = conn.execute(text("""SELECT commercial_revision, simulation_enabled,
+            automation_paused FROM app.organizations WHERE id = :org FOR UPDATE"""),
+            {"org": org}).mappings().one()
+        current = conn.execute(text("""SELECT input_revision, mode, contact_blocked
+            FROM app.conversations WHERE organization_id = :org AND id = :conversation"""),
+            {"org": org, "conversation": conversation}).mappings().first()
+        if current is None:
+            raise HTTPException(404, "Conversa não encontrada.")
+        message = conn.execute(text("""SELECT m.id, m.text FROM app.messages m
+            WHERE m.organization_id = :org AND m.conversation_id = :conversation
+            ORDER BY m.received_at DESC, m.id DESC LIMIT 1"""),
+            {"org": org, "conversation": conversation}).mappings().first()
+        if message is None:
+            raise HTTPException(404, "Mensagem não encontrada.")
+        existing = conn.execute(text("""SELECT id, intent_id, status, model, prompt_version,
+            commercial_revision, estimated_cost_usd FROM app.catalog_agent_runs
+            WHERE organization_id = :org AND conversation_id = :conversation
+              AND message_id = :message"""),
+            {"org": org, "conversation": conversation,
+             "message": message["id"]}).mappings().first()
+        if existing is not None:
+            return {"runId": str(existing["id"]),
+                    "intentId": str(existing["intent_id"]) if existing["intent_id"] else "",
+                    "status": existing["status"], "model": existing["model"],
+                    "promptVersion": existing["prompt_version"],
+                    "commercialRevision": existing["commercial_revision"],
+                    "estimatedCostUsd": str(existing["estimated_cost_usd"])
+                    if existing["estimated_cost_usd"] is not None else "unknown"}
+        if (not organization["simulation_enabled"] or organization["automation_paused"]
+                or current["mode"] != "automatic" or current["contact_blocked"]):
+            raise HTTPException(403, "Resposta automática inelegível.")
+        spent = conn.execute(text("""SELECT COALESCE(SUM(
+            COALESCE(estimated_cost_usd, 0.01)), 0)
+            FROM app.catalog_agent_runs WHERE organization_id = :org"""),
+            {"org": org}).scalar_one()
+        if spent + Decimal("0.01") > MAX_COST_USD:
+            raise HTTPException(429, "Limite de custo da demonstração atingido.")
+        products = conn.execute(text("""SELECT id, name, price, available, version
+            FROM app.products WHERE organization_id = :org AND status = 'ready'
+            ORDER BY name, id LIMIT 100"""), {"org": org}).mappings().all()
+        run = conn.execute(text("""INSERT INTO app.catalog_agent_runs(
+            organization_id, conversation_id, message_id, status, model, prompt_version,
+            commercial_revision) VALUES (:org, :conversation, :message, 'running',
+            :model, :prompt, :revision) RETURNING id"""),
+            {"org": org, "conversation": conversation, "message": message["id"],
+             "model": MODEL, "prompt": PROMPT_VERSION,
+             "revision": organization["commercial_revision"]}).scalar_one()
+    choices = [{"id": str(p["id"]), "name": p["name"]} for p in products]
+    if re.search(r"\b(desconto|descontos|cupom|abatimento)\b",
+                 message["text"], re.IGNORECASE):
+        with transaction(actor, org) as conn:
+            conn.execute(text("""SELECT private.handoff_catalog_reply(
+                :org, :conversation, :message, :revision, 'commercial_exception')"""),
+                {"org": org, "conversation": conversation, "message": message["id"],
+                 "revision": current["input_revision"]})
+            conn.execute(text("""UPDATE app.catalog_agent_runs SET status = 'handoff',
+                estimated_cost_usd = 0, updated_at = now()
+                WHERE organization_id = :org AND id = :run"""),
+                {"org": org, "run": run})
+        return {"runId": str(run), "status": "handoff", "model": MODEL,
+                "promptVersion": PROMPT_VERSION,
+                "commercialRevision": organization["commercial_revision"],
+                "estimatedCostUsd": "0.000000"}
+    try:
+        greeting = is_greeting(message["text"])
+        selection = (Selection(None, 0, 0, Decimal(0)) if greeting else
+                     select_product(message["text"], choices))
+    except (RuntimeError, ValueError, TypeError, IndexError, KeyError,
+            StopIteration, httpx.HTTPError):
+        with transaction(actor, org) as conn:
+            conn.execute(text("""SELECT private.handoff_catalog_reply(
+                :org, :conversation, :message, :revision, 'provider_unavailable')"""),
+                {"org": org, "conversation": conversation, "message": message["id"],
+                 "revision": current["input_revision"]})
+            conn.execute(text("""UPDATE app.catalog_agent_runs SET status = 'handoff',
+                failure_code = 'provider_unavailable', updated_at = now()
+                WHERE organization_id = :org AND id = :run"""),
+                {"org": org, "run": run})
+        return {"runId": str(run), "status": "handoff", "model": MODEL,
+                "promptVersion": PROMPT_VERSION,
+                "commercialRevision": organization["commercial_revision"],
+                "estimatedCostUsd": "unknown"}
+    product = next((p for p in products if p["id"] == selection.product_id), None)
+    conflicting = product is not None and any(
+        other["id"] != product["id"]
+        and other["name"].strip().casefold() == product["name"].strip().casefold()
+        and (other["price"] != product["price"]
+             or other["available"] != product["available"])
+        for other in products
+    )
+    name_supported = (product is not None and product["name"].strip().casefold()
+                      in message["text"].casefold())
+    if conflicting:
+        with transaction(actor, org) as conn:
+            conn.execute(text("""SELECT private.handoff_catalog_reply(
+                :org, :conversation, :message, :revision, 'catalog_conflict')"""),
+                {"org": org, "conversation": conversation, "message": message["id"],
+                 "revision": current["input_revision"]})
+            conn.execute(text("""UPDATE app.catalog_agent_runs SET status = 'handoff',
+                input_tokens = :input_tokens, output_tokens = :output_tokens,
+                estimated_cost_usd = :cost, updated_at = now()
+                WHERE organization_id = :org AND id = :run"""),
+                {"org": org, "run": run, "input_tokens": selection.input_tokens,
+                 "output_tokens": selection.output_tokens,
+                 "cost": selection.estimated_cost_usd})
+        return {"runId": str(run), "status": "handoff", "model": MODEL,
+                "promptVersion": PROMPT_VERSION,
+                "commercialRevision": organization["commercial_revision"],
+                "estimatedCostUsd": str(selection.estimated_cost_usd)}
+    if product is None or not product["available"] or not name_supported:
+        answer = ("Olá! Posso ajudar com informações dos produtos cadastrados. "
+                  "Qual produto você gostaria de conhecer?" if greeting else
+                  "Não encontrei essa informação no catálogo. Diga o nome de um produto "
+                  "cadastrado para eu ajudar.")
+    else:
+        price = ("Preço sob consulta" if product["price"] is None else
+                 f"R$ {product['price']:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."))
+        answer = (f"Sou um atendimento automatizado. {product['name']} está disponível. "
+                  f"{price}. Para falar com uma pessoa, é só pedir.")
+    with transaction(actor, org) as conn:
+        try:
+            latest_revision = conn.execute(text("""SELECT commercial_revision
+                FROM app.organizations WHERE id = :org FOR UPDATE"""),
+                {"org": org}).scalar_one()
+            if latest_revision != organization["commercial_revision"]:
+                conn.execute(text("""SELECT private.handoff_catalog_reply(
+                    :org, :conversation, :message, :revision, 'catalog_conflict')"""),
+                    {"org": org, "conversation": conversation,
+                     "message": message["id"], "revision": current["input_revision"]})
+                conn.execute(text("""UPDATE app.catalog_agent_runs SET status = 'handoff',
+                    failure_code = 'commercial_revision_changed',
+                    input_tokens = :input_tokens, output_tokens = :output_tokens,
+                    estimated_cost_usd = :cost, updated_at = now()
+                    WHERE organization_id = :org AND id = :run"""),
+                    {"org": org, "run": run, "input_tokens": selection.input_tokens,
+                     "output_tokens": selection.output_tokens,
+                     "cost": selection.estimated_cost_usd})
+                return {"runId": str(run), "status": "handoff", "model": MODEL,
+                        "promptVersion": PROMPT_VERSION,
+                        "commercialRevision": latest_revision,
+                        "estimatedCostUsd": str(selection.estimated_cost_usd)}
+            latest_input = conn.execute(text("""SELECT input_revision FROM app.conversations
+                WHERE organization_id = :org AND id = :conversation"""),
+                {"org": org, "conversation": conversation}).scalar_one()
+            if latest_input != current["input_revision"]:
+                conn.execute(text("""UPDATE app.catalog_agent_runs SET status = 'failed',
+                    failure_code = 'input_changed', input_tokens = :input_tokens,
+                    output_tokens = :output_tokens, estimated_cost_usd = :cost,
+                    updated_at = now() WHERE organization_id = :org AND id = :run"""),
+                    {"org": org, "run": run, "input_tokens": selection.input_tokens,
+                     "output_tokens": selection.output_tokens,
+                     "cost": selection.estimated_cost_usd})
+                return JSONResponse(status_code=409, content={
+                    "runId": str(run), "status": "superseded", "model": MODEL,
+                    "promptVersion": PROMPT_VERSION,
+                    "commercialRevision": organization["commercial_revision"],
+                    "estimatedCostUsd": str(selection.estimated_cost_usd),
+                })
+            intent = conn.execute(text("""SELECT private.prepare_test_auto_intent(
+                :org, :conversation, :command, :body)"""),
+                {"org": org, "conversation": conversation,
+                 "command": message["id"], "body": answer}).scalar_one()
+            conn.execute(text("""UPDATE app.catalog_agent_runs SET status = 'pending',
+                intent_id = :intent, input_tokens = :input_tokens,
+                output_tokens = :output_tokens, estimated_cost_usd = :cost,
+                updated_at = now() WHERE organization_id = :org AND id = :run"""),
+                {"org": org, "run": run, "intent": intent,
+                 "input_tokens": selection.input_tokens,
+                 "output_tokens": selection.output_tokens,
+                 "cost": selection.estimated_cost_usd})
+        except DBAPIError as exc:
+            if getattr(exc.orig, "sqlstate", None) == "42501":
+                raise HTTPException(403, "Resposta automática inelegível.") from None
+            raise
+    return {"runId": str(run), "intentId": str(intent), "status": "pending",
+            "model": MODEL, "promptVersion": PROMPT_VERSION,
+            "commercialRevision": organization["commercial_revision"],
+            "estimatedCostUsd": str(selection.estimated_cost_usd)}
 
 
 @app.post("/v1/orgs/{org}/automation/pause")

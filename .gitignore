@@ -9,6 +9,7 @@ node_modules/
 *.tsbuildinfo
 playwright-report/
 test-results/
+celerybeat-schedule*
 .env*
 !.env.example
 

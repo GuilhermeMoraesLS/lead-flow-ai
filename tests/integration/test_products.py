@@ -130,3 +130,29 @@ def test_invalid_price_is_rejected_without_changing_catalog(client, identity):
         })
         assert response.status_code == 422
     assert client.get(base, headers=headers).json() == {"commercialRevision": 1, "products": []}
+
+
+def test_manager_cannot_keep_two_current_products_with_same_name(client, identity):
+    _, headers = identity()
+    org = create_org(client, headers, "Alfa sem duplicatas")
+    base = f"/v1/orgs/{org}/products"
+    first = client.post(base, headers=headers, json={
+        "name": "Plano", "price": "100.0000", "available": True,
+    })
+    assert first.status_code == 201
+    duplicate = client.post(base, headers=headers, json={
+        "name": " plano ", "price": "200.0000", "available": False,
+    })
+    assert duplicate.status_code == 409
+    catalog = client.get(base, headers=headers).json()
+    assert catalog["commercialRevision"] == 2
+    assert [p["id"] for p in catalog["products"]] == [first.json()["id"]]
+    other = client.post(base, headers=headers, json={
+        "name": "Consulta", "price": None, "available": True,
+    })
+    assert other.status_code == 201
+    rename = client.put(f"{base}/{other.json()['id']}", headers=headers, json={
+        "version": 1, "name": "PLANO", "price": None, "available": True,
+    })
+    assert rename.status_code == 409
+    assert client.get(base, headers=headers).json()["commercialRevision"] == 3

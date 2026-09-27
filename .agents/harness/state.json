@@ -1,16 +1,12 @@
 {
   "schemaVersion": 1,
   "feature": "LeadFlow.IA v1",
-  "updatedAt": "2026-09-24T20:15:10Z",
+  "updatedAt": "2026-09-26T22:42:03Z",
   "git": {
     "branch": "main",
-    "baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6",
-    "revisionScope": "working tree; nenhum commit criado",
-    "preexistingChanges": [
-      "RULES.md (modified)",
-      "doc-specs/implementation-slices.md (untracked)",
-      "prompts/PROMPT-IMPLEMENTAR-SLICE.md (untracked)"
-    ]
+    "baseCommit": "904485835cd70030a6e31d3a59647a97f2b27755",
+    "revisionScope": "working tree SL-D01/SL-D02 preexistente e SL-D03 implementado localmente; nenhum commit criado nesta sessão",
+    "preexistingChanges": ["SL-D01: apps/api/src/leadflow/main.py, scripts/local.py, tests/integration/test_products.py, apps/api/src/leadflow/catalog_agent.py, supabase/migrations/0042-0048, tests/integration/test_catalog_agent.py e harness", "SL-D02: telegram.py, telegram-onboarding.tsx, recovery.py, migrations 0049-0052, test_telegram.py, E2E onboarding e harness"]
   },
   "sourceRevisions": [
     {
@@ -50,18 +46,18 @@
       "sha256": "ab65227dd0007774a85a4d55e914a73f6805978942e6ca38f5e6abd34ebf98f3"
     }
   ],
-  "currentSlice": "SL-10",
-  "nextCandidate": "SL-D01",
+  "currentSlice": "SL-D03",
+  "nextCandidate": "SL-D03",
   "demoPlan": {
     "milestone": "D0",
-    "status": "planned",
-    "basis": "Usuário pediu reordenação para apresentação em aproximadamente quatro dias, com bot Telegram criado previamente e modelo da API da OpenAI; planejamento autorizado, sem execução dos novos slices.",
-    "implementationAuthorization": false,
+    "status": "in_progress",
+    "basis": "SL-D03 implementado localmente; ambiente de teste zerado a pedido do usuário para repetir a jornada. Prova Telegram/OpenAI real ainda não executada; M1 permanece aberto.",
+    "implementationAuthorization": true,
     "fullM1StillOpen": true
   },
   "authorization": {
-    "slice": "SL-10",
-    "basis": "Pedido explícito do usuário para exclusivamente SL-10; seams de API de produtos, formulário do gestor e PostgreSQL local confirmadas na conversa.",
+    "slice": "SL-D03",
+    "basis": "Pedido explícito para implementar exclusivamente SL-D03; migration local aprovada em resposta específica. Usuário fará a prova real Telegram ao final; V01/C01 permanecem parciais para M1.",
     "otherSlicesAuthorized": false
   },
   "modelPolicy": {
@@ -509,6 +505,90 @@
       "procedure": "Resposta comercial por IA, documentos e múltiplas fontes externas.",
       "observed": "Fora do SL-10; V09 integral e C10/C12 quanto à resposta permanecem pendentes para slices posteriores.",
       "revision": {"baseCommit": "4f9e709d5c6cd380c7d7ff4ad51bc54cd5f955f6", "scope": "working tree SL-10; sem commit", "checkedAt": "2026-09-24T20:15:10Z"}
+    },
+    {
+      "id": "SLD01-RED", "status": "passed",
+      "procedure": "Teste comportamental antes de cada implementação: rota ausente, reentrega, falta de suporte, timeout, revisão comercial, desconto, unicidade de nome e nova mensagem durante inferência.",
+      "observed": "Falhas relevantes foram observadas antes dos respectivos greens; a primeira chamada retornou 404, reentrega retornou 503, fonte ausente retornou 409 e resposta antiga chegou a ser aceita antes das correções.",
+      "revision": {"baseCommit": "904485835cd70030a6e31d3a59647a97f2b27755", "scope": "working tree SL-D01; sem commit", "checkedAt": "2026-09-25T15:56:32Z"}
+    },
+    {
+      "id": "SLD01-LOCAL", "status": "passed",
+      "procedure": "scripts/local.py migrate aplicado até 0048 e repetido; pytest tests/integration/test_catalog_agent.py -q; scripts/local.py test -q; ruff check apps/api/src scripts tests; mypy apps/api/src.",
+      "observed": "14 testes do agente e 78 totais passaram no PostgreSQL/Auth/Redis locais sintéticos; Ruff e mypy passaram. Preço zero/null, ausente/indisponível, desconto, seleção de outro tenant ou produto não citado, timeout/JSON inválido/429, reentrega, revisão antes do sender com encaminhamento humano, nova mensagem e correção durante inferência foram exercitados. Aviso TestClient/httpx sem falha.",
+      "revision": {"baseCommit": "904485835cd70030a6e31d3a59647a97f2b27755", "scope": "working tree SL-D01; sem commit", "checkedAt": "2026-09-25T16:01:47Z"}
+    },
+    {
+      "id": "SLD01-EXT", "status": "blocked",
+      "procedure": "Casos sintéticos com API OpenAI real no modelo gpt-5.4-mini-2026-03-17, dentro do teto aprovado de US$ 2.",
+      "observed": "OPENAI_API_KEY não estava disponível ao processo Python; nenhuma chamada paga nem avaliação real executada. Modelo/teto e seams aprovados; usuário informou que ainda configurará a chave.",
+      "revision": {"baseCommit": "904485835cd70030a6e31d3a59647a97f2b27755", "scope": "working tree SL-D01; sem commit", "checkedAt": "2026-09-25T15:53:57Z"}
+    },
+    {
+      "id": "SLD01-EXT-LIVE", "status": "passed",
+      "procedure": ".venv/Scripts/python.exe .local/check_openai.py; .venv/Scripts/python.exe .local/verify_openai_catalog.py com TestClient, Auth/PostgreSQL/Redis locais e Responses API real, casos sintéticos zero, preço desconhecido, produto ausente e instrução maliciosa.",
+      "observed": "Primeira tentativa recebeu HTTP 429 billing_not_active; usuário confirmou ativação e repetição passou. Modelo fixo selecionou Consulta no adaptador. No canal de teste: zero pending/custo 0.000287, preço desconhecido pending/0.000279, ausente handoff/0.000188, instrução maliciosa pending/0.000298 sem preço inventado. Replays conservaram runId; respostas pending foram enviadas pelo sender sintético. Chave e conteúdo pessoal não foram impressos. Estimativa somada das oito chamadas bem-sucedidas desta retomada: US$ 0.002043.",
+      "revision": {"baseCommit": "904485835cd70030a6e31d3a59647a97f2b27755", "scope": "working tree SL-D01; sem commit", "checkedAt": "2026-09-25T16:54:45Z"}
+    },
+    {
+      "id": "SLD01-FINAL", "status": "passed",
+      "procedure": "scripts/local.py test -q; ruff check apps/api/src scripts tests; mypy apps/api/src; revisão dirigida do diff, arquivos novos, DTOs/logging e git diff --check.",
+      "observed": "78 testes Python, Ruff e mypy passaram. A primeira tentativa da suíte nesta retomada falhou porque Auth local estava parado; scripts/local.py prepare iniciou PostgreSQL/Auth/Redis e a repetição passou. Sem mudança de interface; E2E web não executado. Revisão identificou apenas arquivos SL-D01/harness, sem segredos nos DTOs ou logging do adaptador.",
+      "revision": {"baseCommit": "904485835cd70030a6e31d3a59647a97f2b27755", "scope": "working tree SL-D01; sem commit", "checkedAt": "2026-09-25T16:54:45Z"}
+    },
+    {
+      "id": "SLD02-LOCAL", "status": "passed",
+      "procedure": "scripts/local.py prepare e migrate até 0051, repetido; pytest tests/integration/test_telegram.py -q após 0051; pytest tests/integration -q antes de 0051; ruff check; mypy; npm lint/typecheck/build; git diff --check.",
+      "observed": "5 testes Telegram passaram após migration 0051, inclusive gestor versus vendedor e recusa de referência cruzada empresa/bot; suíte de 82 Python passou antes de 0051 e do quinto teste. Ruff, mypy, lint, typecheck e build passaram. Vínculo idempotente, callback autenticado, segredo cifrado, falha/retomada simulada e lote por chat após 5 segundos cobertos localmente. Aviso TestClient/httpx sem falha.",
+      "revision": {"baseCommit": "904485835cd70030a6e31d3a59647a97f2b27755", "scope": "working tree SL-D02 sobre SL-D01 preexistente; sem commit", "checkedAt": "2026-09-25T19:40:14Z"}
+    },
+    {
+      "id": "SLD02-FULL", "status": "passed",
+      "procedure": "pytest tests/integration -q após migration 0051",
+      "observed": "83 testes passaram após migration 0051; 1 aviso de depreciação TestClient/httpx, sem falha. Tentativas anteriores receberam Control-C, mas esta execução concluiu com exit code 0.",
+      "revision": {"baseCommit": "904485835cd70030a6e31d3a59647a97f2b27755", "scope": "working tree SL-D02; sem commit", "checkedAt": "2026-09-25T20:13:00Z"}
+    },
+    {
+      "id": "SLD02-TUNNEL", "status": "passed",
+      "procedure": "scripts/local.py api; cloudflared tunnel --no-autoupdate --url http://127.0.0.1:8000; GET HTTPS /openapi.json; POST sintético sem segredo em /v1/telegram/manager/updates.",
+      "observed": "Quick Tunnel temporário https://integrating-con-min-gonna.trycloudflare.com criado; OpenAPI retornou 200 e título LeadFlow API; webhook sem segredo retornou 401. Serviço gratuito de teste segundo documentação Cloudflare; não houve chamada OpenAI nem configuração Telegram real.",
+      "revision": {"baseCommit": "904485835cd70030a6e31d3a59647a97f2b27755", "scope": "working tree SL-D02; ambiente local efêmero", "checkedAt": "2026-09-25T20:03:04Z"}
+    },
+    {
+      "id": "SLD02-EXT", "status": "passed",
+      "procedure": "Criar bot gerenciado no Telegram pela conta de teste; conferir estado persistido, getMe e getWebhookInfo do bot; enviar mensagem real e observar buffer/lote; testar HTTPS público com cabeçalho inválido, válido e replay sintético.",
+      "observed": "Bot da empresa conectado após callback real; identidade e URL do webhook coincidem com o vínculo, pending=0 e sem erro recente. Uma mensagem real entrou e formou um lote ready após 5 segundos. Webhook público retornou 401 sem segredo, 200 com segredo e 200 no replay; uma única linha persistiu. URL Quick Tunnel continua efêmera; token e segredo não foram impressos.",
+      "revision": {"baseCommit": "904485835cd70030a6e31d3a59647a97f2b27755", "scope": "working tree SL-D02; conta e dados de teste; sem commit", "checkedAt": "2026-09-26T14:25:39Z"}
+    },
+    {
+      "id": "SLD02-MANAGER", "status": "passed",
+      "procedure": "Com token em arquivo local ignorado, executar scripts/local.py telegram-webhook; consultar getMe, setWebhook e getWebhookInfo reais; reiniciar API com segredo e enviar callback sintético autenticado local.",
+      "observed": "Bot API confirmou webhook para @LeadFlowAI_gestor_bot; callback sintético autenticado retornou 200. Token e segredo não foram impressos. Nenhum bot gerenciado foi criado ou vinculado nesta prova.",
+      "revision": {"baseCommit": "904485835cd70030a6e31d3a59647a97f2b27755", "scope": "working tree SL-D02; ambiente local efêmero", "checkedAt": "2026-09-25T20:10:32Z"}
+    },
+    {
+      "id": "SLD02-FINAL", "status": "passed",
+      "procedure": "migrate repetido; pytest completo após correção de retomada; 9 testes Telegram após correção de duplicata/token; E2E Edge com recarga; Ruff, mypy, lint, typecheck e git diff --check; rotação de três colunas em conexão/arquivo isolados.",
+      "observed": "Migration sem erro, 84 Python passaram após correção de retomada; 9 Telegram e 1 E2E passaram após alterações finais. Ruff, mypy, lint e typecheck passaram. Rotação isolada preservou descriptografia na versão nova. Duas tentativas posteriores da suíte completa foram interrompidas por Control-C, sem falha de asserção; build anterior à última mudança de UI passou, sem nova execução para preservar a sessão web ativa.",
+      "revision": {"baseCommit": "904485835cd70030a6e31d3a59647a97f2b27755", "scope": "working tree SL-D02; sem commit", "checkedAt": "2026-09-26T14:25:39Z"}
+    },
+    {
+      "id": "SLD03-LOCAL", "status": "passed",
+      "procedure": "migrate até 0056 e repetição; pytest -q isolado sem worker/beat paralelos; Ruff; mypy; npm lint/typecheck/build; E2E Edge de onboarding e painel D0; git diff --check.",
+      "observed": "89 testes Python, Ruff, mypy, lint, typecheck, build e 2 E2E passaram. Teste integrado D0 cobre ativação, lote anterior ignorado, catálogo/revisão/custo, webhook inválido, replay, isolamento, pergunta sem suporte, pedido humano, opt-out, pausa, rejeição comprovada e envio unknown sem retry. Aviso TestClient/httpx sem falha.",
+      "revision": {"baseCommit": "904485835cd70030a6e31d3a59647a97f2b27755", "scope": "working tree SL-D03 sobre D01/D02 preexistentes; sem commit", "checkedAt": "2026-09-26T21:02:11Z"}
+    },
+    {
+      "id": "SLD03-EXT", "status": "not_run",
+      "procedure": "No app real cadastrar produto sintético, ativar D0 e enviar perguntas de conta Telegram de teste; observar resposta, histórico, fila e custo OpenAI.",
+      "observed": "Usuário reservou a prova ponta a ponta para o fim. Bot/webhooks foram reconfigurados, getWebhookInfo confirmou URL e pending=0; HTTPS /openapi.json retornou 200. Nenhuma resposta Telegram/OpenAI real pós-ativação foi observada nesta sessão.",
+      "revision": {"baseCommit": "904485835cd70030a6e31d3a59647a97f2b27755", "scope": "working tree SL-D03; ambiente local efêmero", "checkedAt": "2026-09-26T21:02:11Z"}
+    },
+    {
+      "id": "SLD03-MULTI-OWNER", "status": "passed",
+      "procedure": "Migration 0057 aprovada e aplicada no PostgreSQL local; testar dois bots de empresas distintas com o mesmo gestor Telegram, replay do primeiro bot e duas solicitacoes pendentes; repetir pytest completo, Ruff, mypy e diff.",
+      "observed": "11 testes Telegram e 91 Python passaram; Ruff, mypy e git diff --check passaram. API reiniciada; web/API locais 200; worker respondeu; bot de teste confirmou webhook HTTPS, pending=0 e sem erro recente. Consulta sanitizada mostrou D0 ativo e um produto disponivel. Usuario confirmou criacao do bot; conversa real segue pendente.",
+      "revision": {"baseCommit": "904485835cd70030a6e31d3a59647a97f2b27755", "scope": "working tree SL-D03 e correcao de onboarding; sem commit", "checkedAt": "2026-09-26T21:58:38Z"}
     }
   ],
   "slices": [
@@ -1047,8 +1127,8 @@
     {
       "id": "SL-D01",
       "title": "Responder sobre o catálogo com OpenAI no canal de teste",
-      "status": "planned",
-      "authorized": false,
+      "status": "done",
+      "authorized": true,
       "dependsOn": ["SL-05", "SL-09", "SL-10"],
       "sourceIds": {
         "PRD": ["US-14", "US-15", "US-19", "RN-04", "RN-05", "RN-13", "C08", "C10", "C20", "C21", "C44", "V09"],
@@ -1056,31 +1136,40 @@
       },
       "sourcePath": "doc-specs/implementation-slices.md#sl-d01",
       "releaseConditions": "SL-10 concluído; modelo específico OpenAI, credencial, orçamento, massa sintética e seams aprovados.",
-      "readiness": {"checked": false, "approval": "not_confirmed", "seams": "not_confirmed"},
-      "nextAction": "Após SL-10, confirmar modelo/credencial/orçamento e seams de entrada, sender e LLMProvider; executar somente por pedido específico.",
-      "criteria": []
+      "readiness": {"checked": true, "approval": "pedido específico; modelo gpt-5.4-mini-2026-03-17, teto US$ 2 e migration incremental aprovados; chave local disponível sem versionamento", "seams": "confirmed: entrada/sender de teste, conversa, HTTP OpenAI externo, PostgreSQL/Redis locais e dois tenants"},
+      "nextAction": "Aguardar pedido específico para outro slice. SL-D02/SL-D03 não iniciados; D0 continua parcial sem Telegram real.",
+      "criteria": [
+        {"id": "SL-D01/AC1", "status": "done", "evidence": ["SLD01-LOCAL", "SLD01-EXT-LIVE"], "note": "Modelo real no canal de teste: zero renderizado R$ 0,00 e null renderizado Preço sob consulta; indisponibilidade coberta localmente."},
+        {"id": "SL-D01/AC2", "status": "done", "evidence": ["SLD01-LOCAL", "SLD01-EXT-LIVE"], "note": "Ausente encaminhou com modelo real; instrução maliciosa não mudou preço. Indisponível, conflito, seleção fora do tenant e desconto cobertos em testes locais."},
+        {"id": "SL-D01/AC3", "status": "done", "evidence": ["SLD01-LOCAL", "SLD01-EXT-LIVE", "SLD01-FINAL"], "note": "Timeout, JSON inválido e 429 controlados encaminham uma vez; 429 billing_not_active real foi observado antes da ativação. DTOs não incluem chave/conteúdo pessoal e adaptador não registra logs."},
+        {"id": "SL-D01/AC4", "status": "done", "evidence": ["SLD01-LOCAL", "SLD01-EXT-LIVE", "SLD01-FINAL"], "note": "Run e reentrega únicos no canal real e controlado; isolamento Alfa/Beta local, modelo/prompt/custo e casos sintéticos registrados."}
+      ]
     },
     {
       "id": "SL-D02",
       "title": "Vincular no app um bot Telegram preexistente",
-      "status": "planned",
-      "authorized": false,
+      "status": "done",
+      "authorized": true,
       "dependsOn": ["SL-02", "SL-04", "SL-09"],
       "sourceIds": {
         "PRD": ["US-10", "RN-03", "C01", "C04", "V01"],
         "SPEC": ["REQ-003", "AC-003", "SEC-004", "SEC-005", "EXT-001"]
       },
       "sourcePath": "doc-specs/implementation-slices.md#sl-d02",
-      "releaseConditions": "Bot criado pelo usuário; token por canal seguro, segredo protegido e HTTPS alcançável autorizados; V01 completa permanece aberta.",
-      "readiness": {"checked": false, "approval": "not_confirmed", "seams": "not_confirmed"},
-      "nextAction": "Confirmar ambiente de bot/HTTPS, forma de fornecer token e seams de vínculo/webhook; executar somente por pedido específico.",
-      "criteria": []
+      "releaseConditions": "Bot gerenciado criado por conta de teste pelo percurso no app, identidade/webhook HTTPS e entrada reais confirmados. V01/C01 integrais continuam para M1; Quick Tunnel é temporário.",
+      "readiness": {"checked": true, "approval": "pedido específico com self-service gerenciado, buffer de 5 segundos, migrations locais e Quick Tunnel aprovados; bot gerenciado real confirmado", "seams": "app/API, PostgreSQL/Redis/Celery, Bot API real, HTTPS temporário, callback de criação, mensagem de teste e lote durável confirmados"},
+      "nextAction": "SL-D02 concluído no ambiente de teste. Para SL-D03, integrar lote pronto ao fluxo de catálogo/OpenAI e sender Telegram em ativação D0 explícita; não declarar M1 nem V01 integral. Reconfigurar webhooks quando o Quick Tunnel expirar.",
+      "criteria": [
+        {"id": "SL-D02/AC1", "status": "passed", "evidence": ["SLD02-LOCAL", "SLD02-EXT", "SLD02-FINAL"], "note": "Somente gestor inicia; token real ficou cifrado fora de DTO/log/repositório. Rotação versionada validada em conexão e arquivo isolados, sem rotacionar o banco vivo."},
+        {"id": "SL-D02/AC2", "status": "passed", "evidence": ["SLD02-EXT", "SLD02-FINAL"], "note": "Bot real criado e identidade/webhook confirmados; token inválido, bot duplicado e webhook indisponível produzem falha recuperável em testes focados, sem conexão falsa."},
+        {"id": "SL-D02/AC3", "status": "passed", "evidence": ["SLD02-EXT", "SLD02-FINAL"], "note": "Solicitação e callback idempotentes; cabeçalho inválido negado via HTTPS, replay público sintético único, mensagem real isolada pelo vínculo e selada uma vez."}
+      ]
     },
     {
       "id": "SL-D03",
       "title": "Demonstrar atendimento Telegram ponta a ponta",
-      "status": "planned",
-      "authorized": false,
+      "status": "in_progress",
+      "authorized": true,
       "dependsOn": ["SL-08", "SL-D01", "SL-D02"],
       "sourceIds": {
         "PRD": ["US-12", "US-13", "US-14", "RN-02", "RN-03", "RN-04", "C01", "C03", "C08", "C10", "C44", "V02"],
@@ -1088,9 +1177,14 @@
       },
       "sourcePath": "doc-specs/implementation-slices.md#sl-d03",
       "releaseConditions": "SL-D01/SL-D02 concluídos; modelo, bot, HTTPS e ativação D0 verificados em ambiente de teste controlado.",
-      "readiness": {"checked": false, "approval": "not_confirmed", "seams": "not_confirmed"},
-      "nextAction": "Após os dois percursos, confirmar seams E2E web/Telegram/OpenAI e roteiro de demonstração; não declarar M1 com D0.",
-      "criteria": []
+      "readiness": {"checked": true, "approval": "pedido específico SL-D03 e migration local aprovada; usuário fará o teste real ao final", "seams": "app/API, PostgreSQL/Redis/Celery, webhooks Telegram, catálogo/OpenAI e sender D0 implementados; provedor real pós-ativação ainda not_run"},
+      "nextAction": "Ambiente local zerado: usuário cria nova conta e organização, cadastra produtos, vincula bot e ativa D0 antes de enviar pergunta Telegram real. Registrar esperado/observado, custo e histórico antes de done. Não avançar outro slice.",
+      "criteria": [
+        {"id": "SL-D03/AC1", "status": "not_run", "evidence": ["SLD03-LOCAL", "SLD03-EXT"], "note": "Jornada local/API e UI simulada passaram; mensagem Telegram e resposta OpenAI reais após ativação aguardam teste do usuário."},
+        {"id": "SL-D03/AC2", "status": "not_run", "evidence": ["SLD03-LOCAL", "SLD03-REPLY-FIX"], "note": "Correção recente substitui handoff automático em saudação/pergunta sem correspondência por resposta segura; suíte após esta alteração ainda não executada."},
+        {"id": "SL-D03/AC3", "status": "passed", "evidence": ["SLD03-LOCAL", "SLD02-EXT", "SLD03-MULTI-OWNER"], "note": "Webhook inválido e replay local não acionam resposta duplicada; testes de D01/D02 e D03 cobrem isolamento de produto, bot e histórico entre empresas, inclusive vários bots do mesmo gestor Telegram."},
+        {"id": "SL-D03/AC4", "status": "not_run", "evidence": ["SLD03-LOCAL", "SLD03-EXT"], "note": "Modelo, prompt, revisão e custo sintéticos constam da API/UI; custo e observado do roteiro real faltam. C01/V01 e M1/M2 permanecem abertos."}
+      ]
     },
     {
       "id": "SL-11",

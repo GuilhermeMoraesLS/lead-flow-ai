@@ -4,11 +4,12 @@ test.use({ launchOptions: { channel: "msedge" } });
 
 test("gestor salva a configuração e retoma após recarregar", async ({ page }) => {
   const suffix = crypto.randomUUID();
-  await page.goto("http://127.0.0.1:3000");
+  await page.goto("http://127.0.0.1:3000/cadastro");
   await page.getByLabel("E-mail").fill(`sl02-${suffix}@example.test`);
   await page.getByLabel("Senha").fill(`Synthetic-${suffix}!`);
   await page.getByLabel("Nome da empresa").fill("Alfa sintética");
-  await page.getByRole("button", { name: "Criar operação", exact: true }).last().click();
+  await page.getByRole("button", { name: "Criar conta" }).click();
+  await page.getByRole("link", { name: "Agente de IA", exact: true }).click();
 
   await expect(page.getByRole("heading", { name: "Identidade do agente" })).toBeVisible();
   await page.getByLabel("Nome", { exact: true }).fill("Lia");

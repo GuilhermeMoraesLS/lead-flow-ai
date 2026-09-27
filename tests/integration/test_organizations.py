@@ -2,6 +2,7 @@ import os
 from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
+import httpx
 import jwt
 
 
@@ -64,6 +65,35 @@ def test_organization_isolation_and_expired_session(client, identity):
         json={"name": "Não deve salvar"},
     )
     assert response.status_code == 401
+
+
+def test_member_discovers_own_organizations_without_identifier(client, identity):
+    _, gestor_headers = identity()
+    _, stranger_headers = identity()
+    created = []
+    for name in ("Alfa descoberta", "Beta descoberta"):
+        headers = {**gestor_headers, "Idempotency-Key": str(uuid4())}
+        created.append(client.post("/v1/organizations", headers=headers, json={"name": name}).json())
+    listed = client.get("/v1/me/organizations", headers=gestor_headers)
+    assert listed.status_code == 200
+    assert sorted(listed.json(), key=lambda item: item["name"]) == [
+        {"id": org["id"], "name": org["name"], "role": "gestor"} for org in created]
+    assert client.get("/v1/me/organizations", headers=stranger_headers).json() == []
+    assert client.get("/v1/me/organizations").status_code == 401
+
+    org = created[0]
+    seller = client.post(f"/v1/orgs/{org['id']}/sellers", headers=gestor_headers, json={
+        "name": "Bia", "email": f"bia-{uuid4().hex}@example.test",
+        "phone": "+5511999990000", "available": True}).json()
+    password = client.post(f"/v1/orgs/{org['id']}/sellers/{seller['id']}/enable",
+                           headers=gestor_headers).json()["temporary_password"]
+    login = httpx.post("http://127.0.0.1:54321/token?grant_type=password",
+                       json={"email": seller["email"], "password": password})
+    seller_headers = {"Authorization": "Bearer " + login.json()["access_token"]}
+    assert client.get("/v1/me/organizations", headers=seller_headers).json() == [
+        {"id": org["id"], "name": org["name"], "role": "vendedor"}]
+    client.post(f"/v1/orgs/{org['id']}/sellers/{seller['id']}/revoke", headers=gestor_headers)
+    assert client.get("/v1/me/organizations", headers=seller_headers).json() == []
 
 
 def test_rejected_creation_does_not_consume_idempotency_key(client, identity):

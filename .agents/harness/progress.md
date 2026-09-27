@@ -1,5 +1,59 @@
 # Progresso — LeadFlow.IA v1
 
+## 2026-09-26T22:42:03Z — SL-D03: saudação sem handoff automático
+
+- Evidência do usuário: “Olá” foi processado pelo GPT, virou `catalog_unsupported`/`awaiting_human` e não criou envio. Agora saudações recebem uma resposta curta de boas-vindas e perguntas sem suporte recebem orientação segura, sem transferir automaticamente; handoff explícito e pausa manual continuam preservados. API/worker/beat reiniciados; conversa do teste está `automatic`. Testes não executados após esta alteração; AC2 voltou a `not_run`.
+
+## 2026-09-26T22:07:53Z — ambiente local zerado para repetir D0
+
+- A pedido explícito do usuário, removidos os volumes PostgreSQL/Redis do projeto local, recriados serviços e reaplicadas migrations até 0057. Contagens de `auth.users`, organizações, produtos, vendedores, vínculos e mensagens Telegram: zero. Web/API/Auth locais 200, worker respondeu, HTTPS 200 e webhook gestor confirmado. Bots externos no Telegram permanecem; novo cadastro pode começar. `SL-D03` segue `in_progress`.
+
+## 2026-09-26T21:58:38Z — SL-D03: gestor com várias contas e ambiente pronto
+
+- Corrigido o onboarding para o mesmo gestor Telegram conectar bots distintos em empresas diferentes; migration 0057 aplicada com aprovação, preservando um único bot pendente por gestor. 11 testes Telegram, 91 Python, Ruff, mypy e diff passaram. API, worker e beat reiniciados; HTTPS 200, webhook do bot sem erro e fila pendente zero. Um bot conectado tem D0 ativo e um produto disponível. Usuário confirmou a criação do bot e iniciará a conversa real; AC1/AC4 seguem `not_run`, slice `in_progress`.
+
+## 2026-09-26T21:02:11Z — SL-D03: implementação local concluída, prova real pendente
+
+- Migrations 0053–0056, API, worker e painel adicionam ativação D0 explícita, consumo apenas de lotes posteriores à ativação, catálogo/OpenAI, sender Telegram e histórico com modelo, revisão e custo. `unknown` não é reenviado; pausa, opt-out e pedido humano bloqueiam resposta.
+- Migration local aprovada e repetida. 89 testes Python, Ruff, mypy, lint, typecheck, build e 2 E2E Edge passaram; primeira suíte completa com worker/beat paralelos teve 2 falhas, resolvidas ao repetir isoladamente. Webhooks reais reconfigurados e HTTPS público 200. Usuário fará a mensagem/prova OpenAI real ao final; AC1/AC4 e `done` seguem pendentes. Sem commit ou avanço de slice.
+
+## 2026-09-26T14:25:39Z — SL-D02: bot gerenciado real e entrada confirmados
+
+- Gestor criou o bot pelo percurso no app; vínculo `connected`, identidade e webhook confirmados pela Bot API, com token cifrado. Uma mensagem Telegram real entrou e formou um lote `ready` após 5 segundos. HTTPS público recusou cabeçalho inválido (401), aceitou evento sintético (200) e persistiu replay uma vez. Quick Tunnel precisou ser recriado e os dois webhooks foram atualizados.
+- Retomada após recarga, link direto de criação, atualização automática e falha por bot duplicado corrigidos. 9 testes Telegram, 1 E2E Edge, Ruff, mypy, lint e typecheck passaram; 84 Python passaram após a correção de retomada. Rotação validada isoladamente. Duas tentativas posteriores da suíte completa foram interrompidas por Control-C; build após a última mudança visual não foi executado para preservar a sessão web. `SL-D02` concluído no teste; V01/C01 e M1 permanecem parciais.
+
+## 2026-09-25T20:10:32Z — SL-D02: webhook gestor registrado e guia local
+
+- Token lido apenas do arquivo local ignorado; `telegram-webhook` confirmou `getMe`, `setWebhook` e `getWebhookInfo` reais para @LeadFlowAI_gestor_bot. API reiniciada com segredo; callback sintético autenticado retornou 200. Criado `doc-specs/start.md` com comandos de API, web, worker, beat, migrations e túnel. Suíte após migration 0051: 83 testes passaram, 1 aviso de depreciação. Bot gerenciado e callback reais ainda pendentes; SL-D02 permanece `blocked`.
+
+## 2026-09-25T20:03:04Z — SL-D02: HTTPS temporário verificado
+
+- Usuário autorizou Quick Tunnel sem cobrança; `cloudflared` já estava instalado. API local iniciada e `https://integrating-con-min-gonna.trycloudflare.com` encaminha à API (`/openapi.json` 200); callback sintético sem segredo retornou 401. URL salva em `.local/telegram.env` ignorado pelo Git; token ainda ausente. SL-D02 permanece `blocked` para webhook/bot reais, sem chamada OpenAI e sem avançar outro slice.
+
+## 2026-09-25T19:35:42Z — SL-D02 parcial: bot gerenciado e buffer
+
+- Pedido substituiu vínculo manual por onboarding self-service com bot gerenciado e buffer de 5 segundos; migrations locais autorizadas. Formulário, callbacks autenticados, vínculo/segredo cifrado, estado/retomada e lotes duráveis por chat implementados. Migrations 0049–0051 aplicadas e repetidas; 5 testes focados passaram após 0051, e 82 Python totais antes dela. Repetição total após 0051 foi interrompida pelo ambiente; Ruff, mypy, lint, typecheck e build passaram.
+- Sem URL HTTPS pública ou token do bot gestor configurados, criação/webhook reais estão `blocked`. O lote ainda não é enviado à IA: consumo e resposta Telegram pertencem à integração posterior. SL-D02 permanece `blocked`, AC1–AC3 sem prova integral; SL-D03 não iniciado. Sem commit.
+
+## 2026-09-25T16:54:45Z — SL-D01 concluído no canal de teste
+
+- Após `429 billing_not_active` inicial, o usuário confirmou ativação do faturamento. O adaptador selecionou produto com `gpt-5.4-mini-2026-03-17`; quatro casos integrados reais com massa sintética passaram: zero → `R$ 0,00`, `null` → `Preço sob consulta`, ausente → fila humana, instrução maliciosa de preço → preço do catálogo. Replays conservaram runId. Estimativa total das oito chamadas bem-sucedidas: US$ 0,002043, abaixo de US$ 2; segredo não impresso.
+- Primeira tentativa da suíte nesta retomada falhou por Auth local parado; `scripts/local.py prepare` iniciou PostgreSQL/Auth/Redis. Repetição: 78 testes Python, Ruff e mypy passaram. Migration 0048 repetida e 14 testes focados já haviam passado antes desta retomada. `git diff --check` e revisão dirigida passaram; E2E web não executado por ausência de mudança de interface. AC1–AC4 concluídos; SL-D02/SL-D03 não iniciados.
+
+## 2026-09-25T16:13:31Z — SL-D01: arquivo local para chave OpenAI
+
+- Criado `.local/openai.env` ignorado pelo Git, com `OPENAI_API_KEY=` vazio; `scripts/local.py` carrega a chave para os comandos locais. Teste com chave sintética passou, sem expor valor. `git diff --check` passou.
+- Chamada OpenAI real continua `blocked` até o usuário preencher o arquivo; nenhuma chamada paga foi executada nesta retomada. SL-D01 permanece `in_progress`.
+
+## 2026-09-25T16:01:47Z — SL-D01 parcial
+
+- Mudança do catálogo entre preparação e sender agora cancela a intenção e encaminha a conversa humana. Migration 0048 aplicada e repetida; 14 testes focados do agente, 78 Python totais, Ruff e mypy passaram. OpenAI real permanece bloqueada pela ausência de `OPENAI_API_KEY`; critérios e slice seguem `in_progress`.
+
+## 2026-09-25T15:56:32Z — SL-D01 parcial
+
+- Modelo `gpt-5.4-mini-2026-03-17`, teto US$ 2, seams e migrations incrementais aprovados. Canal de teste prepara intenção sustentada por produto vigente, registra revisão/modelo/custo e encaminha ausência, indisponibilidade, desconto, seleção inválida ou falha do provedor. Sender cancela preparação comercial antiga. Nome duplicado no catálogo vigente agora retorna 409; quatro registros excedentes sintéticos desta sessão foram revogados com histórico preservado.
+- 20 testes focados, 78 Python totais, Ruff, mypy e migrations repetidas passaram. Chamada OpenAI real `blocked`: `OPENAI_API_KEY` ainda indisponível; SL-D01 permanece `in_progress`, sem outro slice iniciado.
+
 ## 2026-09-24T20:13:39Z — SL-10: catálogo comercial versionado
 
 - Gestor cadastra, corrige, remove e consulta produtos sintéticos no app. Migration 0041 guarda preço decimal exato ou `null`, disponibilidade, revisão comercial da empresa e versões imutáveis; API exige gestor e isola Alfa/Beta.
