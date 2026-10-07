@@ -19,10 +19,12 @@ from sqlalchemy.exc import DBAPIError, SQLAlchemyError
 from leadflow.auth import actor_id
 from leadflow.catalog_agent import MAX_COST_USD, MODEL, PROMPT_VERSION, Selection, select_product
 from leadflow.database import transaction
+from leadflow.knowledge import router as knowledge_router
 from leadflow.telegram import router as telegram_router
 
 app = FastAPI(title="LeadFlow API", version="1.0.0")
 app.include_router(telegram_router)
+app.include_router(knowledge_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://127.0.0.1:3000", "http://localhost:3000"],

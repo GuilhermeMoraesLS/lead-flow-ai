@@ -1,5 +1,13 @@
 # Progresso — LeadFlow.IA v1
 
+## 2026-10-07T14:05:26Z — SL-11 concluído com provedor real
+
+- O usuário criou no Avast uma exceção para `api.openai.com`, e o TLS passou a vir da Google Trust Services. Os dois testes com a OpenAI real passaram: o teste opt-in (SL11-EXT-LIVE) e o E2E até **Pronto para uso** (SL11-E2E). Cada ingestão consumiu 37 tokens, com custo estimado de US$ 0,000001. Status `done`. As 3 falhas preexistentes do SL-D03 continuam fora do escopo.
+
+## 2026-10-07T14:00:15Z — SL-11: base de documentos implementada; prova OpenAI bloqueada
+
+- Aprovados V06 (PDF textual, DOCX, TXT/Markdown, 10 MiB), perfil `openai:text-embedding-3-small:1536`, imagem pgvector 0.8.3-pg17 com `REINDEX`, storage privado `.local/knowledge`, pypdf 6.19.0 e teto US$ 1. Migration 0058, API `/knowledge`, extrator isolado, worker por beat e página **Documentos** entregues. SL11-API: 9 testes; Ruff, mypy, lint, typecheck e build passaram. E2E mostrou falha acionável, mas não chegou a pronto: o Avast intercepta TLS para `api.openai.com` (SL11-EXT `blocked`). Suíte: 98 passaram e 3 falharam, as 3 preexistentes no `HEAD` (SL-D03). Status `blocked`, sem commit.
+
 ## 2026-09-26T22:42:03Z — SL-D03: saudação sem handoff automático
 
 - Evidência do usuário: “Olá” foi processado pelo GPT, virou `catalog_unsupported`/`awaiting_human` e não criou envio. Agora saudações recebem uma resposta curta de boas-vindas e perguntas sem suporte recebem orientação segura, sem transferir automaticamente; handoff explícito e pausa manual continuam preservados. API/worker/beat reiniciados; conversa do teste está `automatic`. Testes não executados após esta alteração; AC2 voltou a `not_run`.

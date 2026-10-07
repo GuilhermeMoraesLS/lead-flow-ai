@@ -55,6 +55,7 @@ def load_env():
     os.environ["AUTH_URL"] = "http://127.0.0.1:54321"
     os.environ["JWT_ISSUER"] = "http://127.0.0.1:54321/auth/v1"
     os.environ["APP_ENV"] = "local"
+    os.environ.setdefault("KNOWLEDGE_STORAGE_DIR", str(ROOT / ".local" / "knowledge"))
     if "LOCAL_REDIS_PASSWORD" in values:
         os.environ["CELERY_BROKER_URL"] = (
             "redis://:" + values["LOCAL_REDIS_PASSWORD"] + "@127.0.0.1:54330/0"

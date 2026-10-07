@@ -9,6 +9,7 @@ import psycopg
 from celery import Celery  # type: ignore[import-untyped]
 from sqlalchemy import text
 
+from leadflow import knowledge
 from leadflow.database import transaction
 
 celery_app = Celery("leadflow_recovery", broker=os.environ.get("CELERY_BROKER_URL"))
@@ -33,6 +34,10 @@ celery_app.conf.update(
         },
         "telegram-d0-scan": {
             "task": "leadflow.telegram.process_due",
+            "schedule": 2.0,
+        },
+        "knowledge-ingest-scan": {
+            "task": "leadflow.knowledge.process_due",
             "schedule": 2.0,
         },
     },
@@ -217,6 +222,12 @@ def _send_telegram(token: str, chat_id: int, answer: str) -> tuple[str, str | No
 
 def worker_connection() -> psycopg.Connection[Any]:
     return psycopg.connect(os.environ["WORKER_DATABASE_URL"])
+
+
+@celery_app.task(name="leadflow.knowledge.process_due")  # type: ignore[untyped-decorator]
+def process_knowledge_due() -> int:
+    """Ingest one due document version; durable rows make broker loss harmless."""
+    return knowledge.process_due()
 
 
 @celery_app.task(name="leadflow.recovery.scan")  # type: ignore[untyped-decorator]

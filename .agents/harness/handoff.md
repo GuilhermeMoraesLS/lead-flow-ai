@@ -1,4 +1,19 @@
-# Handoff — SL-D03 implementado; prova Telegram/OpenAI real pendente
+# Handoff — SL-11 concluído; SL-D03 com prova real pendente
+
+## SL-11 concluído — 2026-10-07T14:05:26Z
+
+- O usuário criou no Avast uma exceção para `api.openai.com`, e o certificado passou a vir da Google Trust Services. O teste opt-in com a OpenAI real passou (SL11-EXT-LIVE), assim como o E2E `knowledge.spec.ts`, com falha, correção e **Pronto para uso** após recarga (SL11-E2E). Cada ingestão real consumiu 37 tokens, cerca de US$ 0,000001. `SL-11` está `done`, com AC1–AC4 ligados às evidências.
+- Pendências fora do escopo: as 3 falhas da suíte pertencem à correção SL-D03 (FB-28) e devem ser tratadas nesse slice. Não há rlimit no Windows. O custo das consultas de busca não entra no teto. Substituir e revogar documentos pronto fica para SL-13. Próxima ação: aguardar pedido específico; SL-12 consome `/knowledge/search`, estados e perfil.
+
+## SL-11 — registro do bloqueio 2026-10-07T14:00:15Z
+
+- `SL-11` esteve `blocked` em `main`, base `ff103739a02d744647430f9bf92e7ded962352cb`, sem commit. Somente SL-11 foi autorizado; SL-D03 não foi tocado e segue `in_progress`. Os `package-lock.json` preexistentes foram preservados.
+- Decisões do usuário: V06 permite PDF textual, DOCX e TXT/Markdown até 10 MiB, sem OCR. Perfil `openai:text-embedding-3-small:1536`. Imagem `pgvector/pgvector:0.8.3-pg17` (PostgreSQL 17.10; após a troca foi feito `REINDEX DATABASE` e os dados foram preservados). Storage privado em `.local/knowledge/<org>/<upload>`, ignorado pelo Git. `pypdf==6.19.0` e leitura de DOCX pela stdlib. Teto de US$ 1, configurável em `KNOWLEDGE_EMBEDDING_BUDGET_USD`.
+- Fluxo: `POST /v1/orgs/{org}/knowledge/uploads` → `PUT` na URL curta (JWT do gestor + token, 15 min, corpo bruto) → `POST /knowledge/{upload}/submit` com SHA-256 → beat `leadflow.knowledge.process_due` → `validating/extracting/embedding/ready|failed`, com lease de 5 min, fencing e 3 tentativas. Leitura: `GET /knowledge`, `/knowledge/{doc}/versions`, `/versions/{v}/file` (download com nosniff) e `POST /knowledge/search` (até 6 evidências, filtradas por empresa e versão ativa). O extrator roda em `python -I knowledge_parser.py`, com audit hook que bloqueia rede e processos. No Windows não há rlimit; vale só o timeout de 30 s. Substituir documento pronto devolve 409, porque invalidar fonte é do SL-13. O custo da consulta de busca não entra no teto.
+- Evidências: SL11-RED/API/PY/DIFF passaram. SL11-WEB falhou só no trecho pronto do E2E. SL11-EXT está `blocked`: o Avast Web/Mail Shield reemite o certificado de `api.openai.com`, então o Python recusa o TLS. SL11-SUITE: 98 passaram, 1 skipped e 3 falharam (`test_catalog_agent` ×2, `test_telegram_d0` ×1); as 3 falham igual no `HEAD`, são da correção SL-D03 (FB-28) e ficam fora do escopo. AC1–AC4 passaram localmente, com vetores determinísticos.
+- Próxima ação para concluir: resolver o TLS do Avast, por exceção para `api.openai.com`/Python ou por decisão de confiar na CA (escolha do usuário). Depois rodar `LEADFLOW_LIVE_OPENAI=1 .venv/Scripts/python.exe scripts/local.py test -q tests/integration/test_knowledge.py -k live` e, com API/worker/beat/web ativos, `npm.cmd run test:e2e -- e2e/knowledge.spec.ts`. Se ambos passarem, registrar custo, marcar `done` e repetir diff. A versão `embedding_unavailable` do E2E anterior pode ser reenviada pelo app. Não iniciar SL-12.
+
+## Registro anterior — SL-D03
 
 ## Correção de resposta 2026-09-26T22:42:03Z
 

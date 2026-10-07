@@ -1,7 +1,7 @@
 name: leadflow-sl01
 services:
   db:
-    image: postgres:17.9-alpine
+    image: pgvector/pgvector:0.8.3-pg17
     environment:
       POSTGRES_PASSWORD: ${LOCAL_DB_PASSWORD:?Run scripts/local.py prepare}
       POSTGRES_DB: leadflow_sl01

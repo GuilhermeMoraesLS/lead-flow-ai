@@ -4,7 +4,8 @@ import { ReactNode, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  Bot, Headset, LayoutDashboard, LogOut, Menu, MessageCircle, Package, Send, SlidersHorizontal, Users, X,
+  Bot, FileText, Headset, LayoutDashboard, LogOut, Menu, MessageCircle, Package, Send, SlidersHorizontal, Users,
+  X,
 } from "lucide-react";
 import { Badge, Logo, initials } from "../components/ui";
 import { apiUrl, clearSession, Operation, readSession, Session, setFlash, storeSession } from "../lib/api";
@@ -16,6 +17,7 @@ const managerNav: { section: string; items: NavItem[] }[] = [
   { section: "Configuração", items: [
     { href: "/app/agente", label: "Agente de IA", icon: Bot },
     { href: "/app/produtos", label: "Produtos", icon: Package },
+    { href: "/app/conhecimento", label: "Documentos", icon: FileText },
     { href: "/app/vendedores", label: "Vendedores", icon: Users },
   ] },
   { section: "Canais", items: [

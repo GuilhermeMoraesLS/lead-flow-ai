@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
   "feature": "LeadFlow.IA v1",
-  "updatedAt": "2026-09-26T22:42:03Z",
+  "updatedAt": "2026-10-07T14:05:26Z",
   "git": {
     "branch": "main",
-    "baseCommit": "904485835cd70030a6e31d3a59647a97f2b27755",
-    "revisionScope": "working tree SL-D01/SL-D02 preexistente e SL-D03 implementado localmente; nenhum commit criado nesta sessão",
+    "baseCommit": "ff103739a02d744647430f9bf92e7ded962352cb",
+    "revisionScope": "SL-11 implementado na working tree sobre ff10373; apps/web/package-lock.json e package-lock.json raiz preexistentes preservados; nenhum commit criado nesta sessão",
     "preexistingChanges": ["SL-D01: apps/api/src/leadflow/main.py, scripts/local.py, tests/integration/test_products.py, apps/api/src/leadflow/catalog_agent.py, supabase/migrations/0042-0048, tests/integration/test_catalog_agent.py e harness", "SL-D02: telegram.py, telegram-onboarding.tsx, recovery.py, migrations 0049-0052, test_telegram.py, E2E onboarding e harness"]
   },
   "sourceRevisions": [
@@ -46,8 +46,8 @@
       "sha256": "ab65227dd0007774a85a4d55e914a73f6805978942e6ca38f5e6abd34ebf98f3"
     }
   ],
-  "currentSlice": "SL-D03",
-  "nextCandidate": "SL-D03",
+  "currentSlice": "SL-11",
+  "nextCandidate": "SL-11",
   "demoPlan": {
     "milestone": "D0",
     "status": "in_progress",
@@ -56,8 +56,8 @@
     "fullM1StillOpen": true
   },
   "authorization": {
-    "slice": "SL-D03",
-    "basis": "Pedido explícito para implementar exclusivamente SL-D03; migration local aprovada em resposta específica. Usuário fará a prova real Telegram ao final; V01/C01 permanecem parciais para M1.",
+    "slice": "SL-11",
+    "basis": "Pedido explícito para implementar exclusivamente SL-11 (2026-10-07). Aprovados: V06 conforme proposta SPEC (PDF textual, DOCX, TXT/Markdown, 10 MiB), perfil openai:text-embedding-3-small:1536, imagem pgvector/pgvector:0.8.3-pg17, storage privado em .local/knowledge, pypdf + DOCX via stdlib e teto de US$ 1 para embeddings reais. SL-D03 permanece in_progress e não foi alterado.",
     "otherSlicesAuthorized": false
   },
   "modelPolicy": {
@@ -589,7 +589,16 @@
       "procedure": "Migration 0057 aprovada e aplicada no PostgreSQL local; testar dois bots de empresas distintas com o mesmo gestor Telegram, replay do primeiro bot e duas solicitacoes pendentes; repetir pytest completo, Ruff, mypy e diff.",
       "observed": "11 testes Telegram e 91 Python passaram; Ruff, mypy e git diff --check passaram. API reiniciada; web/API locais 200; worker respondeu; bot de teste confirmou webhook HTTPS, pending=0 e sem erro recente. Consulta sanitizada mostrou D0 ativo e um produto disponivel. Usuario confirmou criacao do bot; conversa real segue pendente.",
       "revision": {"baseCommit": "904485835cd70030a6e31d3a59647a97f2b27755", "scope": "working tree SL-D03 e correcao de onboarding; sem commit", "checkedAt": "2026-09-26T21:58:38Z"}
-    }
+    },
+    {"id": "SL11-RED", "status": "passed", "procedure": "scripts/local.py test -q tests/integration/test_knowledge.py antes do módulo/rotas.", "observed": "Coleta falhou por ausência de leadflow.knowledge; nenhuma rota ou ingestão existia. Red relevante ao slice.", "revision": {"baseCommit": "ff103739a02d744647430f9bf92e7ded962352cb", "scope": "working tree SL-11; sem commit", "checkedAt": "2026-10-07T14:00:15Z"}},
+    {"id": "SL11-API", "status": "passed", "procedure": "Imagem do db trocada para pgvector 0.8.3-pg17 (PG 17.10) com REINDEX DATABASE; migration 0058 aplicada e repetida; scripts/local.py test -q tests/integration/test_knowledge.py com PostgreSQL/Auth locais, extração em subprocesso real e provedor de embeddings substituído por vetores determinísticos de 1536 dimensões.", "observed": "9 testes passaram, 1 skipped (prova OpenAI opt-in). Cobertos: versão só utilizável após ready, busca vazia antes, falhas type_mismatch/no_text/embedding_unavailable acionáveis sem afetar documento pronto, correção no mesmo documento, substituição de documento pronto recusada 409, lease vencida retomada com fencing; limite 10 MiB, extensão, tamanho divergente, token forjado, hash divergente e link expirado; JavaScript em PDF, macro DOCX, zip bomb e DOCTYPE/entidade recusados; PDF página 1 e DOCX seção localizados; audit hook bloqueia socket, subprocess e os.system; reenvio sem nova versão/chunks com localização e versão recuperáveis; Alfa sem download, lista, busca, PUT ou submit da Beta, vendedor 404, RLS app_api sem chunks fora do contexto, vetor de 3 dimensões recusado pelo banco e pelo worker.", "revision": {"baseCommit": "ff103739a02d744647430f9bf92e7ded962352cb", "scope": "working tree SL-11; sem commit", "checkedAt": "2026-10-07T14:00:15Z"}},
+    {"id": "SL11-PY", "status": "passed", "procedure": "ruff check apps/api/src scripts tests; mypy apps/api/src.", "observed": "Ruff e mypy passaram após ajustes de tipagem/imports; dois except amplos do extrator mantidos com noqa justificado (falha fechada).", "revision": {"baseCommit": "ff103739a02d744647430f9bf92e7ded962352cb", "scope": "working tree SL-11; sem commit", "checkedAt": "2026-10-07T14:00:15Z"}},
+    {"id": "SL11-WEB", "status": "failed", "procedure": "npm.cmd run lint, typecheck, build; npm.cmd run test:e2e -- e2e/knowledge.spec.ts no Edge com API, worker, beat e web locais.", "observed": "Lint, typecheck e build passaram (rota /app/conhecimento). E2E: cadastro, envio, estado Falhou com mensagem acionável e botão de correção observados; a correção chegou a Indexando e voltou a Na fila até falhar embedding_unavailable após 3 tentativas, sem ficar utilizável. Causa: TLS para api.openai.com reemitido pelo Avast Web/Mail Shield (CERTIFICATE_VERIFY_FAILED). Trecho ready do E2E não comprovado.", "revision": {"baseCommit": "ff103739a02d744647430f9bf92e7ded962352cb", "scope": "working tree SL-11; sem commit", "checkedAt": "2026-10-07T14:00:15Z"}},
+    {"id": "SL11-EXT", "status": "blocked", "procedure": "Sondagem sanitizada de POST /v1/embeddings com text-embedding-3-small; LEADFLOW_LIVE_OPENAI=1 no teste opt-in.", "observed": "Nenhuma resposta do provedor: certificado de api.openai.com emitido por Avast Web/Mail Shield Root (inspeção HTTPS do antivírus local), inclusive após troca de rede. Tentativa fora do sandbox negada pelo classificador. Nenhuma chamada paga concluída; custo real 0. Chave não impressa.", "revision": {"baseCommit": "ff103739a02d744647430f9bf92e7ded962352cb", "scope": "working tree SL-11; sem commit", "checkedAt": "2026-10-07T14:00:15Z"}},
+    {"id": "SL11-SUITE", "status": "failed", "procedure": "scripts/local.py test -q completo sem worker/beat paralelos; mesmos testes falhos executados no HEAD ff10373 em worktree temporária.", "observed": "98 passed, 1 skipped, 3 failed: test_catalog_agent::test_model_cannot_select_unauthorized_product[beta|unrelated_alpha] (pending != handoff) e test_telegram_d0::test_d0_activation_batch_reply_and_replay (3 envios != 2). As 3 falhas se repetem no HEAD sem SL-11: preexistentes da correção SL-D03 (FB-28), fora do escopo. A primeira execução completa teve 31 falhas com API/worker/web ainda ativos; a repetição isolada resolveu as demais.", "revision": {"baseCommit": "ff103739a02d744647430f9bf92e7ded962352cb", "scope": "working tree SL-11; sem commit", "checkedAt": "2026-10-07T14:00:15Z"}},
+    {"id": "SL11-DIFF", "status": "passed", "procedure": "git diff --check; git status --untracked-files=all; revisão dirigida dos arquivos SL-11; next-env.d.ts gerado pelo build revertido e test-results removido; hashes atuais das fontes.", "observed": "Sem erro de whitespace; somente arquivos SL-11 e harness alterados por esta sessão além dos package-lock preexistentes. Hashes atuais divergem de sourceRevisions (alteração anterior das fontes): plano 30457ac7…, PRD 080da737…, SPEC f3514ff8…, RULES 813e3ca9…, AGENTS 175fbd48…; bloco SL-11 lido na revisão atual.", "revision": {"baseCommit": "ff103739a02d744647430f9bf92e7ded962352cb", "scope": "working tree SL-11; sem commit", "checkedAt": "2026-10-07T14:00:15Z"}},
+    {"id": "SL11-EXT-LIVE", "status": "passed", "procedure": "Após exceção do Avast para api.openai.com criada pelo usuário: emissor TLS conferido; LEADFLOW_LIVE_OPENAI=1 scripts/local.py test -q tests/integration/test_knowledge.py -k live.", "observed": "Certificado emitido por Google Trust Services (WE1). Teste opt-in passou com text-embedding-3-small real: Markdown sintético ready com 2 trechos, perfil openai:text-embedding-3-small:1536, evidência principal em seção: Garantia; 37 tokens, custo estimado US$ 0,000001. Chave não impressa.", "revision": {"baseCommit": "ff103739a02d744647430f9bf92e7ded962352cb", "scope": "working tree SL-11; sem commit", "checkedAt": "2026-10-07T14:05:26Z"}},
+    {"id": "SL11-E2E", "status": "passed", "procedure": "API, worker, beat e web locais; npm.cmd run test:e2e -- e2e/knowledge.spec.ts no Edge com provedor real.", "observed": "1 E2E passou: envio de TXT com conteúdo PDF mostrou Falhou e mensagem acionável; correção no mesmo documento chegou a Pronto para uso com 1 trecho indexado (37 tokens, US$ 0,000001) e persistiu após recarga. Serviços encerrados e test-results removido.", "revision": {"baseCommit": "ff103739a02d744647430f9bf92e7ded962352cb", "scope": "working tree SL-11; sem commit", "checkedAt": "2026-10-07T14:05:26Z"}}
   ],
   "slices": [
     {
@@ -1189,37 +1198,23 @@
     {
       "id": "SL-11",
       "title": "Disponibilizar documento com estado e recuperação de falha",
-      "status": "planned",
-      "authorized": false,
-      "dependsOn": [
-        "SL-10"
-      ],
+      "status": "done",
+      "authorized": true,
+      "dependsOn": ["SL-10"],
       "sourceIds": {
-        "PRD": [
-          "US-05",
-          "US-06",
-          "RN-04",
-          "C11",
-          "V06"
-        ],
-        "SPEC": [
-          "REQ-004",
-          "AC-004",
-          "SEC-006",
-          "DAT-003",
-          "DAT-005",
-          "FT-10"
-        ]
+        "PRD": ["US-05", "US-06", "RN-04", "C11", "V06"],
+        "SPEC": ["REQ-004", "AC-004", "SEC-006", "DAT-003", "DAT-005", "FT-10"]
       },
       "sourcePath": "doc-specs/implementation-slices.md#sl-11",
-      "releaseConditions": "V06 para formatos/tamanhos; perfil de embeddings e provedor fixados conforme SPEC, sujeitos à aprovação de dependências/custo.",
-      "readiness": {
-        "checked": false,
-        "approval": "not_confirmed",
-        "seams": "not_confirmed"
-      },
-      "nextAction": "Antes de iniciar «Disponibilizar documento com estado e recuperação de falha»: obter autorização específica, conferir condições de liberação e dependências; carregar somente o bloco e suas fontes. Confirmar seams antes de escrever testes.",
-      "criteria": []
+      "releaseConditions": "V06 aprovado para esta entrega: PDF textual, DOCX, TXT/Markdown até 10 MiB; perfil openai:text-embedding-3-small:1536; pgvector, storage local e pypdf aprovados; teto US$ 1.",
+      "readiness": {"checked": true, "approval": "pedido específico de SL-11 e decisões V06/embeddings/infra/orçamento em 2026-10-07", "seams": "uploads/submit/status, download autorizado e busca de evidências pela API; worker app_worker; provedor de embeddings substituível em teste"},
+      "nextAction": "SL-11 concluído. Aguardar pedido específico de outro slice; SL-12 consome estados, perfil, versões e busca de evidências. Não iniciar SL-12 sem autorização.",
+      "criteria": [
+        {"id": "SL-11/AC1", "status": "passed", "evidence": ["SL11-API", "SL11-E2E", "SL11-EXT-LIVE"], "note": "Só versão ready com documento ativo entra na busca; falhas acionáveis sem afetar fonte independente; no app, falha e correção até Pronto para uso com provedor real."},
+        {"id": "SL-11/AC2", "status": "passed", "evidence": ["SL11-API"], "note": "Tipo real por assinatura, 10 MiB, macros/JS/anexos/entidades e zip bomb recusados; extração em subprocesso -I com audit hook sem rede/processos. Limites de memória/CPU só via rlimit em POSIX; no Windows vale o timeout de 30 s."},
+        {"id": "SL-11/AC3", "status": "passed", "evidence": ["SL11-API", "SL11-EXT-LIVE"], "note": "Mesmo hash/perfil reaproveita a versão sem nova ingestão nem chunks; falha recuperável é reprocessada no mesmo registro; evidência devolve documento, versão, ordinal e localização."},
+        {"id": "SL-11/AC4", "status": "passed", "evidence": ["SL11-API", "SL11-EXT-LIVE"], "note": "Isolamento de arquivo, lista, busca e upload entre Alfa/Beta; vector(1536) e CHECK de perfil impedem mistura; provedor real gravou 1536 dimensões no perfil fixo."}
+      ]
     },
     {
       "id": "SL-12",
